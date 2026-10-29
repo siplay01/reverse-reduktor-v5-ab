@@ -1,6 +1,6 @@
 # QA report (2026-10-29, local, macOS, Node 26.8, Playwright 1.64.1)
 
-States reached: code written, production build passed, scenarios verified in real browsers locally. **Not published** (no repository created yet, see README_RUN.md). Firefox **not run** (see below).
+States reached: code written, production build passed, scenarios verified in real browsers locally and in CI, **published** 2026-10-29 at https://siplay01.github.io/reverse-reduktor-v5-ab/ (A: `/a/`, B: `/b/`), live suite passed.
 
 ## Commands and results
 
@@ -13,7 +13,9 @@ States reached: code written, production build passed, scenarios verified in rea
 | Unit | `node --experimental-strip-types qa/unit.test.ts` | all assertions pass (search scoring, line identity, quantity clamps, sanitising stored data, letter text) |
 | Static | `node qa/links.mjs` | 90 pages, 3831 internal links/assets, 369 images, **0 problems**. Also checks: one h1, unique title/description per design, `noindex` on every page, `robots.txt Disallow`, no em dash, no СибФлотСервис / revers-remont.ru / Барнаултрансмаш, no part or store photos, alt + size on every image, no «отправлено», РКО PDF SHA-256 equals the owner's file |
 | Browser tests | `npx playwright test --project=chromium --project=webkit --project=iphone-webkit --project=android-chromium` | **124 passed, 0 failed, 16 skipped** (skips: axe runs only on Chromium engines; Tab-to-link test off on desktop WebKit; mobile-menu test off on desktop) |
-| Firefox | `npx playwright test --project=firefox` | **not runnable here**: the Playwright Firefox build exits on start («Could not find profile folder»), also outside the sandbox. The GitHub workflow installs and runs Firefox; it has not run yet because nothing is pushed. |
+| Firefox | `npx playwright test --project=firefox` | Not runnable on this Mac (the Playwright Firefox build exits on start, also outside the sandbox). **Runs in CI:** GitHub Actions run 40942234177, all five projects incl. Firefox: 153 passed, 0 failed, 22 skipped. |
+| CI type check | `npx astro check` in CI | first run failed (no Node types for `playwright.config.ts`, `qa/unit.test.ts`); fixed with `@types/node`, now 47 files, 0 errors |
+| Live site | `PW_URL=https://siplay01.github.io/reverse-reduktor-v5-ab/ npx playwright test` (Chromium, WebKit, iPhone, Android) | 124 passed, 0 failed, 16 skipped; 404 for unknown paths, РКО PDF 200 |
 | Security | `gitleaks dir .` | no leaks |
 
 ## Scenarios covered by the browser tests (each for A and B)

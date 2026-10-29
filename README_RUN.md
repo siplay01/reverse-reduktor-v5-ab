@@ -29,9 +29,9 @@ node qa/shots.mjs 1440,390 home,node chromium light  # screenshots (preview on :
 node qa/compare.mjs                                  # A|B sheets from the screenshots
 ```
 
-## Publish (GitHub Pages, needs Dmitry)
+## Published
 
-Creating a public repository is blocked for the agent in auto mode, so run the first step yourself:
+Live since 2026-10-29: https://siplay01.github.io/reverse-reduktor-v5-ab/ (repo siplay01/reverse-reduktor-v5-ab). `git push` from this folder redeploys through the workflow. The repo was created with:
 
 ```
 ! cd ~/Documents/Projects/Reductor/v5-ab && gh repo create siplay01/reverse-reduktor-v5-ab --public --source . --push
