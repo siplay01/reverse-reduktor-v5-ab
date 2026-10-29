@@ -43,7 +43,8 @@
   .b-rfq.has .cnt { background: #fff; color: var(--primary); }
   .b-rfq[aria-current="page"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--primary); }
   .menu-btn { display: none; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius-s); cursor: pointer; font-weight: 600; }
-  @media (max-width: 1279px) { .b-tel { display: none; } }
+  @media (max-width: 1439px) { .b-tel { display: none; } .b-nav a { padding: 0 10px; } .b-bar { gap: 20px; } }
+  .b-nav { min-width: 0; }
   @media (max-width: 1179px) {
     .b-bar { gap: 10px; }
     .b-rfq { margin-left: auto; }
