@@ -32,6 +32,8 @@ for (const width of w.split(",").map(Number)) {
     const page = await ctx.newPage();
     await page.goto(BASE + v + "/" + PAGES[key], { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
+    // load lazy images before a full-page shot
+    if (full === "1") { await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } scrollTo(0, 0); }); await page.waitForLoadState("networkidle"); }
     const ov = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (ov > 0) console.log(`OVERFLOW ${v} ${key} ${width}: ${ov}px`);
     await page.screenshot({ path: `${dir}/${v}-${key}-${width}.png`, fullPage: full === "1" });

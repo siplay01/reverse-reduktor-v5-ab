@@ -19,3 +19,4 @@ None of these blocks the demo. Each item says what the site shows until the answ
 | 13 | Steering gears: only РГ-0,25 (scheme) or also РГ-0,63 / РГ-1,6 (old repair page)? | РГ-0,25 only. |
 | 14 | Privacy policy mentions Яндекс Метрика and Tilda; the demo has no counters. Update the text before launch. | Owner text unchanged, plus a factual note about browser storage. |
 | 15 | «Наш сайт: revers-reduktor.ru» in the chat: is that the target domain? | Demo stays on GitHub Pages. |
+| 16 | **Originals of the studio photos without watermark.** revers-reduktor.ru has three good studio shots of whole gearboxes (red units, a beige and a black unit) taken on one backdrop, but all carry the «СибФлотСервис» watermark. The originals would lift both designs more than any layout change. Which models are on them? | Not used; the site leads with the manual's drawings and one cropped workshop photo. |

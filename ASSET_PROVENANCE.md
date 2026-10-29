@@ -13,11 +13,16 @@ Every file under `public/` and every fact source in `src/`. Paths relative to `~
 | `img/cert/rko-06552-{600,1200}.webp` | Render of the owner's certificate PDF (V4 session) | Certificate block, B panel | ООО «Дело» | Seal and signature are the original raster; nothing redrawn. |
 | `docs/svidetelstvo-rko-06552.pdf` | `~/Downloads/Reductor/СВИДЕТЕЛЬСТВО РКО 2026.pdf`, byte-identical, SHA-256 `c1626dbe71c6480bfbfa25e74326bb723d715aa62f3bdaa362e227f0f8461c77` (checked by `qa/links.mjs` on every build) | All РКО links | | |
 | `docs/rr300-rukovodstvo.pdf` | `~/Downloads/Reductor/Руководство РР300 А4.pdf`, byte-identical (`cmp`, 2026-10-29) | РР-300 page, documentation, tenders | РР-300 | |
+| `img/v5/rr300-section-{1200,2400}.webp` | Manual `Руководство РР300 А4.pdf` page 6 (vector), rendered at 400 dpi grey by `scripts/drawings.py`, crop 25/48/552/515 pt | A home, A РР-300 page (interactive section) | РР-300 | Callout positions (48, numbers 1-47) and the 38-line legend extracted from the PDF text by the same script → `src/data/cutaway.json`; legend lines whose numbers are only on the manual's sectional details (48-58) are not offered. |
+| `img/v5/rr300-front-{1200,2400}.webp` | Same manual, page 8 (fig. 2, vector), 400 dpi | B home, B РР-300 page | РР-300 | |
+| `img/v5/rr300-side-{1200,2400}.webp` | Same manual, page 15 (fig. 4), 400 dpi | not used yet | РР-300-7514 | |
+| `img/v5/rr300-unit-{480,780}.webp` | Crop of `hero-rr300-pair.jpg` (x 620-1400, y 100-720): the right-hand unit only | A home ledger, both РР-300 pages, B register | «РР-300, фото предприятия» | Max 780 px wide, so never shown full-bleed. |
+| `img/v5/flange-detail-{600,1080}.webp` | Crop of `rr300-flange.jpg` | A home services | none | Model not confirmed; caption «Фото предприятия». |
 | `favicon.svg` | Drawn for V5 (two circles, neutral colours) | Browser tab | | Not a logo or trademark. |
 | Fonts Golos Text, JetBrains Mono | `@fontsource-variable/*` npm packages, SIL Open Font License 1.1 | All pages | | Self-hosted, no font CDN. |
 | Icons | `@tabler/icons` (MIT), inlined SVG | All pages | | |
 
-Not published (deliberately): `rr300-side` (model unconfirmed), `parts.jpg` (photo of loose parts, banned by the owner, looks staged), every part photo of the old store, the РР-238 store photo `99135878458a` (revers-remont.ru watermark), the expired certificate № 06483, the old site's AI-generated pictures.
+Not published (deliberately): the three studio photos of whole gearboxes from revers-reduktor.ru (`5eca7786c1465192`, `6de6d66dfa996fc5`, `a2e20f1bc0604431`, all with the «СибФлотСервис» watermark); `rr300-side` (model unconfirmed), `parts.jpg` (photo of loose parts, banned by the owner, looks staged), every part photo of the old store, the РР-238 store photo `99135878458a` (revers-remont.ru watermark), the expired certificate № 06483, the old site's AI-generated pictures.
 
 ## Data
 

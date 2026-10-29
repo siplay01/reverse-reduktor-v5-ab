@@ -1,26 +1,37 @@
 ---
+// A: no top header. A fixed navy rail on the left (desktop) works like the contents page of a technical dossier;
+// on phones it collapses to a slim bar with a full-screen menu.
 import Icon from "../shared/Icon.astro";
-import { COMPANY, CERT, link } from "../../lib/site";
+import { COMPANY, CERT, link, root } from "../../lib/site";
 import { NAV, NAV2 } from "../../lib/nav";
 const { section } = Astro.props as { section: string };
 const L = (p = "") => link("a", p);
 ---
-<div class="a-topline"><div class="wrap">
-  <span class="a-op">{COMPANY.operator} · изготовление, ремонт и запасные части судовых реверс-редукторов</span>
-  <a class="a-rko" href={L("dokumentaciya/#rko")}><Icon name="certificate" size={16} />РКО № {CERT.no}</a>
-  <a href={`tel:${COMPANY.tel}`} class="a-tel"><Icon name="phone" size={16} />{COMPANY.phone}</a>
-</div></div>
-<header class="a-header"><div class="wrap">
-  <a class="a-brand" href={L()}>
-    <b>{COMPANY.brand}</b><span>{COMPANY.tagline}</span>
-  </a>
-  <nav class="a-nav" id="nav" aria-label="Основное меню">
-    <ul class="main">{NAV.map(([p, n]) => <li><a href={L(p)} aria-current={section === p ? "page" : undefined}>{n}</a></li>)}</ul>
-    <ul class="sec">{NAV2.map(([p, n]) => <li><a href={L(p)} aria-current={section === p ? "page" : undefined}>{n.split(" ")[0]}</a></li>)}</ul>
-    <p class="a-nav-contact"><a href={`tel:${COMPANY.tel}`}>{COMPANY.phone}</a><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></p>
+<header class="a-rail-wrap">
+  <div class="a-bar">
+    <a class="a-word" href={L()}><b>{COMPANY.brand}</b><span>{COMPANY.tagline}</span></a>
+    <a class="a-rfq-m" href={L("zapros/")} data-rfq-count-wrap><Icon name="clipboard-list" size={20} /><span class="cnt" data-rfq-count>0</span><span class="sr"> позиций в списке запроса</span></a>
+    <button class="menu-btn" type="button" aria-controls="nav" aria-expanded="false" data-menu><Icon name="menu-2" size={22} /><span>Меню</span></button>
+  </div>
+  <nav class="a-rail" id="nav" aria-label="Основное меню">
+    <a class="a-word a-word-rail" href={L()}><b>{COMPANY.brand}</b><span>{COMPANY.tagline}</span></a>
+    <ul class="a-toc">
+      {NAV.map(([p, n]) => <li><a href={L(p)} aria-current={section === p ? "page" : undefined}>{n}</a></li>)}
+    </ul>
+    <ul class="a-toc a-toc2">
+      {NAV2.map(([p, n]) => <li><a href={L(p)} aria-current={section === p ? "page" : undefined}>{n}</a></li>)}
+    </ul>
+    <form class="a-rail-search" role="search" action={L("zapchasti/")} method="get">
+      <label for="a-rq">Деталь по обозначению</label>
+      <div><input id="a-rq" name="q" type="search" placeholder="525-16-110" autocomplete="off" spellcheck="false"><button type="submit" aria-label="Найти"><Icon name="search" size={18} /></button></div>
+    </form>
+    <a class="a-rail-rfq" href={L("zapros/")} data-rfq-count-wrap aria-current={section === "zapros/" ? "page" : undefined}>
+      <span>Список запроса</span><span class="cnt" data-rfq-count>0</span>
+    </a>
+    <div class="a-rail-foot">
+      <a class="a-stamp" href={L("dokumentaciya/#rko")}><span>РКО</span><b>№ {CERT.no}</b><span>до {CERT.to}</span></a>
+      <p><a href={`tel:${COMPANY.tel}`}>{COMPANY.phone}</a><br><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></p>
+      <p class="a-op">{COMPANY.operator}, {COMPANY.city}</p>
+    </div>
   </nav>
-  <a class="a-rfq" href={L("zapros/")} data-rfq-count-wrap aria-current={section === "zapros/" ? "page" : undefined}>
-    <Icon name="clipboard-list" size={20} /><span class="lbl">Запрос</span><span class="cnt" data-rfq-count>0</span><span class="sr"> позиций в списке запроса</span>
-  </a>
-  <button class="menu-btn" type="button" aria-controls="nav" aria-expanded="false" data-menu><Icon name="menu-2" size={22} /><span>Меню</span></button>
-</div></header>
+</header>

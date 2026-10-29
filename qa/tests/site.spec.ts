@@ -28,6 +28,19 @@ test.describe("without JavaScript", () => {
   });
 });
 
+test("B home: live results under the search field, add without leaving the page", async ({ page }) => {
+  await page.goto("./b/");
+  await page.fill("#b-q", "525-16-110");
+  const first = page.locator("[data-live-list] li").first();
+  await expect(first.locator(".sku")).toHaveText("525-16-110");
+  await expect(page.locator("[data-live-count]")).toContainText("Найдено");
+  await first.locator("[data-rfq-add]").click();
+  await expect(page.locator("[data-rfq-panel-list] li").first()).toContainText("525-16-110");
+  await page.fill("#b-q", "нет-такой-детали-zzz");
+  await expect(page.locator("[data-live-count]")).toContainText("ничего не найдено");
+  await expect(page.locator("[data-live-list]")).toBeHidden();
+});
+
 test("404 page", async ({ page }) => {
   const r = await page.goto("./a/net-takoy-stranicy/");
   expect(r?.status()).toBe(404);
@@ -38,7 +51,7 @@ for (const v of VS) {
   test.describe(`design ${v.toUpperCase()}`, () => {
     test("home: brand, operator, РКО near first screen, real PDF", async ({ page, request }) => {
       await page.goto(`./${v}/`);
-      await expect(page.locator(".a-brand, .b-brand").first()).toContainText("Реверс-редуктор");
+      await expect(page.locator(".a-word, .b-brand").first()).toContainText("Реверс-редуктор");
       await expect(page.locator("body")).toContainText("ООО «Дело»");
       const pdf = page.locator('a[href$="svidetelstvo-rko-06552.pdf"]').first();
       await expect(pdf).toBeVisible();
@@ -215,6 +228,18 @@ for (const v of VS) {
       expect(await txt.text()).toContain("ИНН: 2225060059");
       await page.goto(`./${v}/zakupki/`);
       await expect(page.locator("#docs + .tbl-wrap")).toContainText("06552");
+    });
+
+    test("cross-section legend marks callouts on the drawing", async ({ page }) => {
+      await page.goto(`./${v}/produkciya/rr-300/`);
+      const cut = page.locator("[data-cutaway]");
+      test.skip(v === "b", "B shows the front view instead of the section on this page");
+      await cut.locator('button[data-cut="22"]').click();
+      await expect(cut.locator('button[data-cut="22"]')).toHaveAttribute("aria-pressed", "true");
+      await expect(cut.locator('.cut-pt.on')).toHaveCount(1);
+      await expect(cut.locator('.cut-pt[data-n="22"]')).toHaveClass(/on/);
+      await cut.locator('button[data-cut="2 11 24 39 42"]').click();
+      await expect(cut.locator('.cut-pt.on')).toHaveCount(5);
     });
 
     test("no console errors, CSP violations or failed requests", async ({ page }) => {

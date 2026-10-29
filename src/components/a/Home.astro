@@ -1,99 +1,104 @@
 ---
+// A · «Паспорт изделия»: an editorial technical dossier. The drawing is the hero, the photo is a document of the unit.
 import Icon from "../shared/Icon.astro";
-import CertFeature from "../shared/CertFeature.astro";
-import { models, rr300, nodes, services, workshopPhoto, entriesOf } from "../../lib/domain";
+import Cutaway from "../shared/Cutaway.astro";
+import { models, rr300, nodes, services, unitPhoto, flangePhoto, entriesOf } from "../../lib/domain";
 import { COMPANY, CERT, link, root } from "../../lib/site";
 const L = (p = "") => link("a", p);
-const ph = rr300.photo!;
 const others = models.filter((m) => m.id !== "rr300");
-const cut = rr300.drawings[0];
-const n5 = nodes[4];
+const val = (m: typeof rr300, l: string) => m.key.find((k) => k.label === l)?.value ?? "–";
+const strip = [1, 3, 5, 10, 14, 20].map((f) => nodes.find((n) => n.figure === f)!);
 ---
-<section class="a-hero" aria-labelledby="a-h1">
-  <div class="a-hero-text">
-    <p class="a-eyebrow">{COMPANY.operator} · {COMPANY.city}</p>
-    <h1 id="a-h1">Судовые реверс-редукторы: изготовление, ремонт и запасные части</h1>
-    <p class="a-hero-lead">РР-300, РР-238, 3Д6, 3Д12 для дизелей 3Д6, 3Д12 и ЯМЗ. Каталог деталей РР-300 по оригинальным заводским чертежам и спецификациям.</p>
-    <p class="a-hero-cta"><a class="btn light" href={L("produkciya/")}>Наша продукция</a><a class="btn outline-light" href={L("zapchasti/")}>Запасные части</a></p>
+<section class="a-open" aria-labelledby="a-h1">
+  <p class="a-eyebrow">{COMPANY.operator} · {COMPANY.city} · {COMPANY.tagline.toLowerCase()}</p>
+  <h1 id="a-h1">Судовые реверс-редукторы</h1>
+  <div class="a-open-row">
+    <p class="a-open-sub">Изготовление, ремонт и запасные части для гидравлических РР-300, РР-238 и механических 3Д6, 3Д12. Детали РР-300 подбираются по оригинальным заводским чертежам.</p>
+    <dl class="a-facts">
+      <div><dd>{rr300.variants.length}</dd><dt>заводских исполнений РР-300</dt></div>
+      <div><dd>{nodes.length}</dd><dt>узлов в каталоге с чертежами и спецификациями</dt></div>
+      <div><dd><a href={L("dokumentaciya/#rko")}>№ {CERT.no}</a></dd><dt>свидетельство о признании РКО, до {CERT.to}</dt></div>
+    </dl>
   </div>
-  <figure class="a-hero-photo">
-    <img src={root(ph.f.src)} srcset={`${root(ph.t.src)} ${ph.t.w}w, ${root(ph.f.src)} ${ph.f.w}w`} sizes="(min-width: 1000px) 45vw, 100vw" width={ph.f.w} height={ph.f.h} alt={ph.alt} fetchpriority="high" />
-    <figcaption>{ph.caption}, <span class="sku">{rr300.designation}</span></figcaption>
-  </figure>
+  <p class="a-open-links"><a href={L("produkciya/")}>Наша продукция<Icon name="arrow-right" size={20} /></a><a href={L("zapchasti/")}>Найти деталь<Icon name="arrow-right" size={20} /></a><a href={L("zakupki/")}>Документы для закупки<Icon name="arrow-right" size={20} /></a></p>
 </section>
 
-<div class="a-rail"><div class="wrap">
-  <Icon name="certificate" size={22} />
-  <p><b>{CERT.kind} Российского Классификационного Общества № {CERT.no}</b><span>действует с {CERT.from} по {CERT.to}</span></p>
-  <a href="#rko">Область признания</a>
-  <a href={root(CERT.pdf)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={16} />PDF</a>
-</div></div>
+<div class="a-sheet-wrap"><Cutaway id="home-cut" /></div>
 
-<div class="wrap">
-  <section class="a-sec a-models" aria-labelledby="a-models-h">
-    <header class="a-sec-head"><h2 id="a-models-h">Наша продукция</h2><a class="textlink" href={L("produkciya/")}>Все модели и муфты сцепления <Icon name="arrow-right" size={16} /></a></header>
-    <div class="a-models-grid">
-      <article class="a-model-lead">
-        <div class="a-model-draw"><img src={root(cut.t.src)} width={cut.t.w} height={cut.t.h} alt={`Чертёж РР-300: ${cut.title}`} loading="lazy" /></div>
-        <div>
-          <p class="kicker">Гидравлический · <span class="sku">{rr300.designation}</span></p>
-          <h3><a href={L("produkciya/rr-300/")}>{rr300.name}</a></h3>
-          <p>{rr300.text[0]}</p>
-          <dl class="a-keys">{rr300.key.map((k) => <div><dt>{k.label}</dt><dd>{k.value}</dd></div>)}<div><dt>Исполнения</dt><dd>{rr300.variants.length}</dd></div></dl>
-        </div>
-      </article>
-      <ul class="a-model-rows">
-        {others.map((m) => (
-          <li>
-            <h3><a href={L(`produkciya/${m.slug}/`)}>{m.name}</a></h3>
-            <p class="a-row-des"><span class="sku">{m.designation}</span> · {m.kind}</p>
-            <p class="a-row-k">{m.key.map((k) => `${k.label.toLowerCase()} ${k.value}`).join(" · ")}</p>
-          </li>
-        ))}
-      </ul>
+<section class="a-ledger" aria-labelledby="a-led-h">
+  <header class="a-head2"><h2 id="a-led-h">Наша продукция</h2><a href={L("produkciya/")}>Характеристики всех моделей</a></header>
+  <article class="a-lead-item">
+    <figure class="a-unit"><img src={root(unitPhoto.f.src)} width={unitPhoto.f.w} height={unitPhoto.f.h} alt={unitPhoto.alt} loading="lazy" /><figcaption>РР-300, фото предприятия</figcaption></figure>
+    <div class="a-lead-text">
+      <p class="a-eyebrow">Гидравлический · <span class="sku">{rr300.designation}</span></p>
+      <h3><a href={L("produkciya/rr-300/")}>{rr300.name}</a></h3>
+      <p>{rr300.text[0]}</p>
+      <dl class="a-nums">
+        <div><dt>Мощность</dt><dd>{val(rr300, "Мощность")}</dd></div>
+        <div><dt>Передний ход</dt><dd>{val(rr300, "Передний ход")}</dd></div>
+        <div><dt>Масса</dt><dd>{val(rr300, "Масса")}</dd></div>
+        <div><dt>Исполнения</dt><dd>{rr300.variants.length}</dd></div>
+      </dl>
+      <p class="a-inline-links"><a href={L("produkciya/rr-300/#ispolneniya")}>Таблица исполнений</a><a href={L("zapchasti/rr-300/")}>Каталог узлов</a></p>
     </div>
-  </section>
+  </article>
+  <table class="a-led-tbl">
+    <caption class="sr">Другие модели</caption>
+    <thead><tr><th scope="col">Модель</th><th scope="col">Обозначение</th><th scope="col">Тип</th><th scope="col">Мощность</th><th scope="col">Передний ход</th><th scope="col">Масса</th><th scope="col"><span class="sr">Ссылки</span></th></tr></thead>
+    <tbody>{others.map((m) => (
+      <tr>
+        <th scope="row"><a href={L(`produkciya/${m.slug}/`)}>{m.name}</a></th>
+        <td class="sku">{m.designation}</td><td>{m.kind}</td><td class="nw">{val(m, "Мощность")}</td><td class="nw">{val(m, "Передний ход")}</td><td class="nw">{val(m, "Масса")}</td>
+        <td class="nw"><a href={L(`zapchasti/${m.slug}/`)}>Запчасти, {entriesOf(m.id).length}</a></td>
+      </tr>
+    ))}</tbody>
+  </table>
+</section>
 
-  <section class="a-sec a-cat" aria-labelledby="a-cat-h">
-    <div class="a-cat-draw">
-      <img src={root(n5.drawing.t.src)} width={n5.drawing.t.w} height={n5.drawing.t.h} alt={`Чертёж узла РР-300, рис. ${n5.figure}: ${n5.title}`} loading="lazy" />
-      <p>Рис. {n5.figure}. {n5.title}</p>
-    </div>
-    <div class="a-cat-text">
-      <h2 id="a-cat-h">Запасные части по заводским чертежам</h2>
-      <p>{nodes.length} узлов РР-300: чертёж с номерами позиций, спецификация и количество на одно изделие выбранного исполнения. Для 3Д6, 3Д12 и РР-238: перечни по заводским обозначениям.</p>
-      <form class="a-search" role="search" action={L("zapchasti/")} method="get">
-        <label for="a-q">Обозначение или наименование детали</label>
-        <div><input id="a-q" name="q" type="search" placeholder="Например, 525-16-110" autocomplete="off" spellcheck="false" enterkeyhint="search"><button class="btn" type="submit"><Icon name="search" size={18} />Найти</button></div>
-      </form>
-      <ul class="a-cat-links">
-        <li><a href={L("zapchasti/rr-300/")}>РР-300: {nodes.length} узлов</a></li>
-        {others.map((m) => <li><a href={L(`zapchasti/${m.slug}/`)}>{m.name}: {entriesOf(m.id).length} поз.</a></li>)}
-      </ul>
-    </div>
-  </section>
+<section class="a-parts" aria-labelledby="a-parts-h">
+  <div class="a-parts-text">
+    <h2 id="a-parts-h">Запасные части по заводским чертежам</h2>
+    <p>Каждый из {nodes.length} узлов РР-300 открывается чертежом с номерами позиций и спецификацией: заводское обозначение, количество на одно изделие выбранного исполнения, масса и материал.</p>
+    <form class="a-search" role="search" action={L("zapchasti/")} method="get">
+      <label for="a-q">Обозначение или наименование детали</label>
+      <div><input id="a-q" name="q" type="search" placeholder="Например, 525-16-110" autocomplete="off" spellcheck="false" enterkeyhint="search"><button class="btn" type="submit"><Icon name="search" size={18} />Найти</button></div>
+    </form>
+  </div>
+  <ol class="a-strip">
+    {strip.map((n) => <li><a href={L(`zapchasti/rr-300/${n.slug}/`)} data-keep-isp><span class="a-strip-img"><img src={root(n.drawing.t.src)} width={n.drawing.t.w} height={n.drawing.t.h} alt="" loading="lazy" /></span><span class="a-strip-no">Рис. {n.figure}</span><span class="a-strip-t">{n.title}</span></a></li>)}
+  </ol>
+  <p class="a-parts-more"><a href={L("zapchasti/rr-300/")}>Все {nodes.length} узлов РР-300</a><span>Перечни по обозначениям: {others.map((m, i) => <>{i > 0 && ", "}<a href={L(`zapchasti/${m.slug}/`)}>{m.name}</a></>)}</span></p>
+</section>
 
-  <section class="a-sec a-svc" aria-labelledby="a-svc-h">
-    <div class="a-svc-text">
-      <h2 id="a-svc-h">Услуги</h2>
-      <ul>{services.map((s) => <li><a href={L(`uslugi/#${s.id}`)}>{s.title}</a>{s.rko && <span class="a-rko-mark">РКО</span>}</li>)}</ul>
-      <p><a class="btn ghost" href={L("uslugi/")}>Порядок работ</a></p>
+<section class="a-cert" id="rko" aria-labelledby="a-cert-h">
+  <div class="a-cert-in">
+    <figure class="a-cert-doc">
+      <img src={root(CERT.img.t.src)} width={CERT.img.t.w} height={CERT.img.t.h} alt={`Скан: свидетельство о признании РКО № ${CERT.no}, выдано ООО «Дело»`} loading="lazy" />
+      <figcaption><a class="fig-zoom" href={root(CERT.img.f.src)} data-zoom data-alt={`Свидетельство о признании РКО № ${CERT.no}`}><Icon name="arrows-maximize" size={16} />Увеличить скан</a></figcaption>
+    </figure>
+    <div class="a-cert-text">
+      <p class="a-eyebrow">{CERT.issuer}</p>
+      <h2 id="a-cert-h">{CERT.kind} <span>№ {CERT.no}</span></h2>
+      <p class="a-cert-dates"><span>{CERT.from}</span><span class="a-cert-to">действует до</span><span>{CERT.to}</span></p>
+      <p class="a-cert-lead">Признаёт за ООО «Дело» возможность выполнять в соответствии с Правилами РКО:</p>
+      <ul>{CERT.scope.map((s) => <li>{s}</li>)}</ul>
+      <p><a class="btn light" href={root(CERT.pdf)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={18} />Открыть PDF<span class="btn-meta">{CERT.pdfKb} КБ</span></a></p>
     </div>
-    <figure class="a-svc-photo"><img src={root(workshopPhoto.t.src)} width={workshopPhoto.t.w} height={workshopPhoto.t.h} alt={workshopPhoto.alt} loading="lazy" /></figure>
-    <div class="a-svc-doc">
-      <p class="kicker">Из свидетельства РКО № {CERT.no}</p>
-      <p>«{CERT.scope[1].replace(/;$/, "")}»</p>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <CertFeature />
+<section class="a-svc" aria-labelledby="a-svc-h">
+  <header class="a-head2"><h2 id="a-svc-h">Услуги</h2><a href={L("uslugi/")}>Порядок работ и заказ ремонта</a></header>
+  <div class="a-svc-grid">
+    <ol class="a-svc-list">
+      {services.map((s) => <li><a href={L(`uslugi/#${s.id}`)}>{s.title}</a>{s.rko && <span class="a-rko">в области признания РКО</span>}</li>)}
+    </ol>
+    <figure class="a-svc-photo"><img src={root(flangePhoto.t.src)} srcset={`${root(flangePhoto.t.src)} 600w, ${root(flangePhoto.f.src)} 1080w`} sizes="(min-width: 900px) 35vw, 100vw" width={flangePhoto.t.w} height={flangePhoto.t.h} alt={flangePhoto.alt} loading="lazy" /><figcaption>Фото предприятия</figcaption></figure>
+  </div>
+</section>
 
-  <section class="a-sec a-proc" aria-labelledby="a-proc-h">
-    <div>
-      <h2 id="a-proc-h">Закупки и тендеры</h2>
-      <p>Документы участника, реквизиты для заявки и порядок направления приглашения.</p>
-    </div>
-    <dl class="a-proc-req"><div><dt>ИНН</dt><dd>{COMPANY.inn}</dd></div><div><dt>ОГРН</dt><dd>{COMPANY.ogrn}</dd></div><div><dt>E-mail</dt><dd><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></dd></div></dl>
-    <p class="btns"><a class="btn" href={L("zakupki/")}>Документы участника</a><a class="btn ghost" href={L("kontakty/#rekvizity")}>Все реквизиты</a></p>
-  </section>
-</div>
+<section class="a-proc" aria-labelledby="a-proc-h">
+  <h2 id="a-proc-h">Закупки и тендеры</h2>
+  <p>Документы участника, реквизиты для заявки и порядок приглашения к закупке.</p>
+  <p class="a-open-links"><a href={L("zakupki/")}>Документы участника<Icon name="arrow-right" size={20} /></a><a href={L("kontakty/#rekvizity")}>Реквизиты ООО «Дело»<Icon name="arrow-right" size={20} /></a></p>
+</section>

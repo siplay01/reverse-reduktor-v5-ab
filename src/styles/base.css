@@ -285,3 +285,31 @@ select:disabled { opacity: .55; }
   .menu-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .menu-btn { padding: 0 10px; }
 }
+
+/* ---------- РР-300 cross-section with legend (shared structure; looks per design) */
+.cut { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 320px); margin: 0; align-items: stretch; }
+.cut-sheet { background: #fff; padding: 20px; position: relative; color: #152A34; }
+.cut-img { position: relative; }
+.cut-img img { width: 100%; }
+.cut-pt { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 2.5px solid var(--cut-mark, #B0442B); background: color-mix(in srgb, var(--cut-mark, #B0442B) 14%, transparent); opacity: 0; transform: scale(.5); pointer-events: none; }
+.cut-pt.on { opacity: 1; transform: scale(1); }
+@media (prefers-reduced-motion: no-preference) { .cut-pt { transition: opacity .15s, transform .15s; } }
+.cut-stamp { border-collapse: collapse; font-size: 12.5px; margin: 16px 0 0 auto; width: min(100%, 620px); color: #152A34; }
+.cut-stamp th, .cut-stamp td { border: 1px solid #152A34; padding: 5px 8px; text-align: left; font-weight: 400; }
+.cut-stamp th { color: #52626A; width: 1%; white-space: nowrap; }
+.cut-stamp a { color: inherit; }
+.cut-legend { display: flex; flex-direction: column; min-height: 0; padding: 20px 0 0 24px; }
+.cut-h { font-weight: 600; font-size: 17px; margin: 0 0 4px; color: var(--head); }
+.cut-hint { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
+.cut-legend ul { list-style: none; margin: 0; padding: 0; overflow: auto; max-height: 680px; border-top: 1px solid var(--line); }
+.cut-legend li { border-bottom: 1px solid var(--line); }
+.cut-legend button { display: grid; grid-template-columns: 4.6em minmax(0, 1fr); gap: 8px; width: 100%; min-height: 40px; padding: 8px 6px; background: none; border: 0; text-align: left; cursor: pointer; font-size: 14.5px; color: var(--text); }
+.cut-legend button:hover, .cut-legend button:focus-visible { background: var(--cur); }
+.cut-legend button[aria-pressed="true"] { background: var(--cur); box-shadow: inset 3px 0 0 var(--cut-mark, #B0442B); font-weight: 600; }
+.cut-n { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13.5px; }
+@media (max-width: 1100px) {
+  .cut { grid-template-columns: minmax(0, 1fr); }
+  .cut-legend { padding: 16px 0 0; }
+  .cut-legend ul { max-height: 360px; }
+}
+@media (max-width: 560px) { .cut-sheet { padding: 10px; } .cut-stamp { font-size: 12px; display: block; } .cut-stamp tbody { display: block; } .cut-stamp tr { display: grid; grid-template-columns: max-content minmax(0, 1fr); } .cut-stamp tr + tr { margin-top: -1px; } .cut-stamp th, .cut-stamp td { margin: 0 0 -1px -1px; } .cut-pt { width: 22px; height: 22px; margin: -11px 0 0 -11px; } }

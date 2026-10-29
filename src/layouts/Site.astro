@@ -45,6 +45,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 <body>
 <a class="skip" href="#main">Перейти к содержимому</a>
 {v === "a" ? <HeaderA section={section} /> : <HeaderB section={section} />}
+<div class={v === "a" ? "a-main" : "b-main"}>
 <main id="main" tabindex="-1">
   <slot name="hero" />
   <div class={wide ? "" : "wrap page"}>
@@ -57,6 +58,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   </div>
 </main>
 {v === "a" ? <FooterA /> : <FooterB />}
+</div>
 <div id="live" class="sr" aria-live="polite"></div>
 <div class="toast" data-toast hidden role="status"><span data-toast-text></span><a href={link(v, "zapros/")}>Открыть список запроса</a></div>
 <dialog class="viewer" data-viewer aria-labelledby="viewer-title" data-zoom="fit">

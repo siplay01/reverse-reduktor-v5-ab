@@ -44,6 +44,20 @@ function paint() {
   const ids = new Set(list.map(lineId));
   $$("[data-rfq-count]").forEach((el) => (el.textContent = String(list.length)));
   $$("[data-rfq-count-wrap]").forEach((el) => el.classList.toggle("has", list.length > 0));
+  $$("[data-rfq-panel]").forEach((panel) => {
+    const ol = $("[data-rfq-panel-list]", panel)!;
+    $("[data-rfq-panel-empty]", panel)!.hidden = list.length > 0;
+    ol.hidden = list.length === 0;
+    ol.replaceChildren(...list.slice(-4).reverse().map((x) => {
+      const li = document.createElement("li");
+      const d = document.createElement("span"); d.className = "sku"; d.textContent = x.d;
+      const n = document.createElement("span"); n.textContent = ` ${x.n}`;
+      const q = document.createElement("span"); q.className = "q"; q.textContent = `${x.q} шт.`;
+      li.append(d, n, q);
+      return li;
+    }));
+    if (list.length > 4) { const li = document.createElement("li"); li.className = "more"; li.textContent = `и ещё ${list.length - 4}`; ol.append(li); }
+  });
   $$<HTMLButtonElement>("[data-rfq-add]").forEach((b) => {
     const on = ids.has(lineId(itemOf(b)));
     b.setAttribute("aria-pressed", String(on));
@@ -200,6 +214,47 @@ function finder(root: HTMLElement) {
 }
 $$("[data-finder]").forEach(finder);
 
+// ------------------------------------------------------------------ live search on the B home page (results under the field, not a popover)
+function live(root: HTMLElement) {
+  const data = JSON.parse(document.getElementById("parts-index")?.textContent || "[]") as [string, string, string, string, string, string, string, string, number][];
+  const base = root.dataset.base!;
+  const input = $<HTMLInputElement>("input", root)!;
+  const ol = $("[data-live-list]", root)!, count = $("[data-live-count]", root)!, ex = $("[data-live-ex]", root)!, all = $("[data-live-all]", root)!;
+  const idle = count.textContent;
+  const render = () => {
+    const q = input.value.trim();
+    if (!q) { ol.hidden = true; all.hidden = true; ex.hidden = false; count.textContent = idle; return; }
+    const hits = data.map((r) => ({ r, s: score([r[1], ...r[7].split("|").filter(Boolean)], r[2], q) })).filter((x) => x.s > 0).sort((a, b) => b.s - a.s);
+    ex.hidden = true;
+    count.textContent = hits.length ? `Найдено: ${hits.length}` : `По запросу «${q}» ничего не найдено. Проверьте обозначение или впишите позицию в список запроса вручную.`;
+    ol.hidden = hits.length === 0;
+    all.hidden = hits.length <= 8;
+    $("a", all)!.setAttribute("href", `${base}zapchasti/?q=${encodeURIComponent(q)}`);
+    ol.replaceChildren(...hits.slice(0, 8).map(({ r }) => {
+      const [k, d, n, , mname, at, href, , uses] = r;
+      const li = document.createElement("li");
+      const a = document.createElement("a"); a.href = href ? base + href : `${base}zapchasti/?q=${encodeURIComponent(d)}`;
+      const sd = document.createElement("span"); sd.className = "sku"; sd.textContent = d;
+      const sn = document.createElement("span"); sn.className = "b-live-n"; sn.textContent = n;
+      const sm = document.createElement("span"); sm.className = "b-live-m"; sm.textContent = [mname, at, uses > 1 ? `ещё ${uses - 1}` : ""].filter(Boolean).join(" · ");
+      a.append(sd, sn, sm);
+      const b = document.createElement("button"); b.type = "button"; b.className = "btn ghost sm";
+      Object.assign(b.dataset, { rfqAdd: "", k, d, n, m: mname, at: uses === 1 ? at : uses ? `${uses} места на чертежах` : "", href: a.href });
+      const lbl = document.createElement("span"); lbl.dataset.lbl = ""; lbl.textContent = "В запрос";
+      const sr = document.createElement("span"); sr.className = "sr"; sr.textContent = `: ${d} ${n}`;
+      b.append(lbl, sr);
+      li.append(a, b);
+      return li;
+    }));
+    paint();
+  };
+  let deb = 0;
+  input.addEventListener("input", () => { clearTimeout(deb); deb = window.setTimeout(render, 90); });
+  $$<HTMLAnchorElement>("[data-live-try]", root).forEach((t) => t.addEventListener("click", (e) => { e.preventDefault(); input.value = t.dataset.liveTry!; render(); input.focus(); }));
+  if (input.value) render();
+}
+$$("[data-live]").forEach(live);
+
 // ------------------------------------------------------------------ request page
 function rfqPage(root: HTMLElement) {
   const email = root.dataset.email!;
@@ -308,6 +363,29 @@ function rfqPage(root: HTMLElement) {
   addEventListener("storage", (e) => { if (e.key === STORE) render(); });
 }
 $$("[data-rfq-page]").forEach(rfqPage);
+
+// ------------------------------------------------------------------ cross-section legend: mark callouts
+$$("[data-cutaway]").forEach((root) => {
+  const pts = $$("[data-n]", root);
+  const btns = $$<HTMLButtonElement>("[data-cut]", root);
+  let pinned: HTMLButtonElement | null = null;
+  const show = (b: HTMLButtonElement | null) => {
+    const on = new Set((b?.dataset.cut || "").split(" ").filter(Boolean));
+    pts.forEach((p) => p.classList.toggle("on", on.has(p.dataset.n!)));
+    root.classList.toggle("marking", on.size > 0);
+  };
+  btns.forEach((b) => {
+    b.addEventListener("mouseenter", () => show(b));
+    b.addEventListener("focus", () => show(b));
+    b.addEventListener("mouseleave", () => show(pinned));
+    b.addEventListener("blur", () => show(pinned));
+    b.addEventListener("click", () => {
+      pinned = pinned === b ? null : b;
+      btns.forEach((x) => x.setAttribute("aria-pressed", String(x === pinned)));
+      show(pinned);
+    });
+  });
+});
 
 // ------------------------------------------------------------------ small actions
 document.addEventListener("click", async (e) => {

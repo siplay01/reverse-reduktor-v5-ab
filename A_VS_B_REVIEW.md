@@ -1,35 +1,47 @@
-# A vs B review
+# A vs B review (second pass, 2026-10-29)
 
-Same pages, same data, same viewport, Chromium, light theme, real browser renders of the production build (2026-10-29). Images are local files in `review/` (not committed). Grayscale sheets show that the layouts differ without colour.
+Real browser renders of the production build, Chromium, light theme. Images are local in `review/` (not committed).
 
-| Page | Desktop 1440 | Mobile 390 | Grayscale |
-| --- | --- | --- | --- |
-| Home | `review/compare/home-1440.jpg` | `review/compare/home-390.jpg` | `review/compare/home-1440-gray.jpg`, `home-390-gray.jpg` |
-| Parts search (catalog) | `review/compare/parts-1440.jpg` | `review/compare/parts-390.jpg` | `parts-*-gray.jpg` |
-| Node РР-300, fig. 5 | `review/compare/node-1440.jpg` | `review/compare/node-390.jpg` | `node-*-gray.jpg` |
-| Tenders / requisites | `review/compare/tenders-1440.jpg` | `review/compare/tenders-390.jpg` | `tenders-*-gray.jpg` |
-| Documentation / РКО | `review/compare/docs-1440.jpg` | single files in `review/mobile-390/` | `docs-1440-gray.jpg` |
-| Request list (filled by real clicks: fig. 5 pos. 4 and 6 in variant -010, one 3Д6 line) | `review/compare/request-1440.jpg` | `review/compare/request-390.jpg` | `request-*-gray.jpg` |
-| РР-300 product | `review/compare/rr300-1440.jpg` | `review/mobile-390/{a,b}-rr300-390.jpg` | `rr300-1440-gray.jpg` |
+## Before / after
 
-Single full-page files: `review/desktop-1440/`, `review/mobile-390/`; WebKit renders `review/webkit/`; dark theme `review/dark/`. All 8 widths (320, 360, 390, 430, 768, 1024, 1440, 1920) for 13 page types per design are in `qa/screenshots/chromium-light/` after `node qa/shots.mjs 320,360,390,430,768,1024,1440,1920`.
+| | Desktop 1440 | Mobile 390 |
+| --- | --- | --- |
+| V1, V3, V4, V5 first pass, old Tilda site, new A, new B: first screens side by side | `review/audit/before-after-1440.jpg` | `review/audit/before-after-390.jpg` |
+
+V1, V3, V4 and the first V5 pass share one first screen (header bar, H1 left, the same phone photo right). The new A opens with a navy contents rail, a 112 px statement and the engineering drawing; the new B opens with a search console, live results and the request panel. Diagnosis in `DESIGN_DECISIONS_A_B.md`.
+
+## Same page, both designs (full page, colour and grayscale)
+
+| Page | Desktop 1440 | Mobile 390 |
+| --- | --- | --- |
+| Home | `review/compare/home-1440.jpg`, `home-1440-gray.jpg` | `review/compare/home-390.jpg`, `home-390-gray.jpg` |
+| Parts search | `review/compare/parts-1440.jpg` | `review/compare/parts-390.jpg` |
+| Node РР-300, fig. 5 | `review/compare/node-1440.jpg` | `review/compare/node-390.jpg` |
+| РР-300 product | `review/compare/rr300-1440.jpg` | `review/mobile-390/{a,b}-rr300-390.jpg` |
+| Tenders | `review/compare/tenders-1440.jpg` | `review/compare/tenders-390.jpg` |
+| Documentation / РКО | `review/compare/docs-1440.jpg` | `review/mobile-390/{a,b}-docs-390.jpg` |
+| Request list (filled by real clicks) | `review/compare/request-1440.jpg` | `review/compare/request-390.jpg` |
+
+Single files: `review/desktop-1440/`, `review/mobile-390/`.
 
 ## What differs
 
-| | A · Naval Authority | B · Steel & Cobalt |
+| | A · «Паспорт изделия» | B · «Каталожный терминал» |
 | --- | --- | --- |
-| First screen | Dark split hero, photo as the visual anchor, two CTAs | Light hero, search box as the anchor, framed photo |
-| РКО near first screen | Full-width rail under the hero | White panel with thumbnail in an overlapping info strip |
-| Path to the catalog | Teaser block with a real node drawing and search | Header search on every page, hero search, 26-node index on the home page |
-| Models | One large + three compact rows | Specification table |
-| Rhythm | Few large sections, 88 px gaps, bronze accents | Denser sections, 2 px ink section rules, mono labels |
-| Node page | Large drawing beside the title, table full width | Sticky 400 px drawing column next to the table |
-| Footer | Navy, brand-first | Ink, four columns with mono requisites |
-
-## What is the same on purpose
-
-Data, URLs, the finder, the variant selector, the request list and letter text, requisites, the certificate block content, accessibility and mobile behaviour.
+| Navigation | Fixed left rail (contents of a dossier) | One-line command bar |
+| First screen | Statement in 112 px type, three real figures, then the drawing sheet | Search console with live results, model routes, request panel |
+| Main visual | Interactive РР-300 section (fig. 1) on a framed sheet with a title block | Wall of all 26 node drawings; front view (fig. 2) in a technical frame |
+| Photo use | Cropped РР-300 unit as a document of the product | Same crop, small, beside the register |
+| Type | Weight 500, very large, tight tracking, small caps labels | Weight 650, mid sizes, mono labels and numbers |
+| Rhythm | 88-128 px gaps, hairlines, one dark spread | 48-72 px, 2 px ink rules, white panels on a grid background |
+| РКО | Rail stamp on every page + a full dark spread on the home page | Thumbnail panel on the first screen; full block on the documentation page |
+| Parts search | Search form above the list (document) | Sticky filter column beside the results (application) |
+| Product page | 180 px title, the section drawing, two-column data sheet | Spec sheet with a sticky framed drawing and photo |
 
 ## Recommendation
 
-For the owner's stated audience (procurement departments and fleet engineers who come for a part number or a tender document) **B** is the better default: search is on every page, the request list is always visible, and the home page reaches all 26 nodes in one click. **A** reads as the more representative company page and suits a first meeting with a new owner or a buyer who does not yet know the range. Both carry the same catalog, so the choice is about the first impression, not about function. If one is picked, the other's best part is cheap to borrow: A's certificate rail and editorial product block would fit B's home page without changing its structure.
+**B** for daily use by procurement and fleet engineers: the first screen answers «есть ли деталь и где она на чертеже» without a click, the request list is always in view, and all 26 nodes are one click from the home page.
+
+**A** for representing the company (a new owner, a first meeting, a tender committee that does not know the range): it reads as a serious manufacturer's technical dossier, and the interactive section explains the product better than any photo the owner has today.
+
+Either design becomes noticeably stronger once the owner supplies the studio photos without the «СибФлотСервис» watermark (NEEDS_OWNER_INPUT item 16).

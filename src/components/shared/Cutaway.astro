@@ -1,0 +1,34 @@
+---
+// РР-300 longitudinal section from the manual (fig. 1) with its own legend. Choosing a legend line marks
+// the matching callout numbers on the drawing. Without JS: the drawing and the full legend.
+import { cutaway, rr300 } from "../../lib/domain";
+import { MANUAL, root } from "../../lib/site";
+interface Props { compact?: boolean; id?: string }
+const { compact = false, id = "cut" } = Astro.props;
+const c = cutaway;
+---
+<figure class={`cut ${compact ? "cut-compact" : ""}`} data-cutaway aria-labelledby={`${id}-cap`}>
+  <div class="cut-sheet">
+    <div class="cut-img">
+      <img src={root(c.src.t.src)} srcset={`${root(c.src.t.src)} 1200w, ${root(c.src.f.src)} 2400w`} sizes="(min-width: 1200px) 60vw, 100vw"
+        width={c.src.t.w} height={c.src.t.h} alt="Продольный разрез реверс-редуктора РР-300 с номерами позиций 1–47 по руководству по эксплуатации" loading="lazy" decoding="async" />
+      {c.callouts.map((p) => <span class="cut-pt" data-n={p.n} style={`left:${p.x}%;top:${p.y}%`} aria-hidden="true"></span>)}
+    </div>
+    <table class="cut-stamp">
+      <caption class="sr">Основная надпись чертежа</caption>
+      <tbody>
+        <tr><th scope="row">Изделие</th><td>Реверс-редуктор {rr300.name}</td><th scope="row">Обозначение</th><td class="sku">{rr300.designation}</td></tr>
+        <tr><th scope="row">Вид</th><td>Продольный разрез</td><th scope="row">Источник</th><td><a href={root(MANUAL.href)} target="_blank" rel="noopener">РР-300.РЭ, рис. 1</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <figcaption class="cut-legend">
+    <p class="cut-h" id={`${id}-cap`}>Устройство РР-300</p>
+    <p class="cut-hint">Выберите деталь: номера отметятся на разрезе.</p>
+    <ul>
+      {c.legend.map((l) => (
+        <li><button type="button" data-cut={l.nums.join(" ")} aria-pressed="false"><span class="cut-n">{l.nums.join(", ")}</span><span>{l.name}</span></button></li>
+      ))}
+    </ul>
+  </figcaption>
+</figure>

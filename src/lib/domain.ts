@@ -187,3 +187,20 @@ export const services: Service[] = [
     "Подбор запасных частей по заводским обозначениям и исполнению реверс-редуктора.",
   ] },
 ];
+
+// ------------------------------------------------------------------ V5 rethink media: vector drawings of the manual, rendered at 400 dpi
+import cutawayJson from "../data/cutaway.json";
+export interface Callout { n: number; x: number; y: number }
+const onDrawing = new Set((cutawayJson.callouts as Callout[]).map((c) => c.n));
+export const cutaway = {
+  src: { t: { src: "img/v5/rr300-section-1200.webp", w: 1200, h: 1120 }, f: { src: "img/v5/rr300-section-2400.webp", w: 2400, h: 2239 } } as Pic,
+  callouts: cutawayJson.callouts as Callout[],
+  // only legend entries whose numbers appear on fig. 1 (48-58 are on the manual's sectional details)
+  legend: (cutawayJson.legend as { nums: number[]; name: string }[])
+    .map((l) => ({ nums: l.nums.filter((n) => onDrawing.has(n)), name: l.name }))
+    .filter((l) => l.nums.length),
+};
+export const frontView: Pic = { t: { src: "img/v5/rr300-front-1200.webp", w: 1200, h: 1328 }, f: { src: "img/v5/rr300-front-2400.webp", w: 2400, h: 2656 } };
+export const sideView: Pic = { t: { src: "img/v5/rr300-side-1200.webp", w: 1200, h: 715 }, f: { src: "img/v5/rr300-side-2400.webp", w: 2400, h: 1429 } };
+export const unitPhoto = { t: { src: "img/v5/rr300-unit-480.webp", w: 480, h: 382 }, f: { src: "img/v5/rr300-unit-780.webp", w: 780, h: 620 }, alt: "Гидравлический реверс-редуктор РР-300 на поддоне в цехе, вид со стороны соединительной муфты" };
+export const flangePhoto = { t: { src: "img/v5/flange-detail-600.webp", w: 600, h: 556 }, f: { src: "img/v5/flange-detail-1080.webp", w: 1080, h: 1000 }, alt: "Реверс-редуктор на участке предприятия, соединительный фланец крупным планом" };

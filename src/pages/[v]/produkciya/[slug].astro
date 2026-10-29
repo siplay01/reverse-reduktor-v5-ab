@@ -2,66 +2,113 @@
 import Site from "../../../layouts/Site.astro";
 import Icon from "../../../components/shared/Icon.astro";
 import Figure from "../../../components/shared/Figure.astro";
+import Cutaway from "../../../components/shared/Cutaway.astro";
 import { perVariant } from "../../../lib/page";
-import { models, type Model } from "../../../lib/domain";
+import { models, frontView, unitPhoto, entriesOf, type Model } from "../../../lib/domain";
 import { link, MANUAL, root, type V } from "../../../lib/site";
 export function getStaticPaths() {
   return perVariant(() => models.map((m) => ({ params: { slug: m.slug }, props: { m } })));
 }
 const { v, m } = Astro.props as { v: V; m: Model };
-const L = (p = "") => link(v, p);
+const L = (p: string) => link(v, p);
 const rq = { k: `model:${m.id}`, d: m.designation, n: `Реверс-редуктор ${m.name}`, m: m.name, href: L(`produkciya/${m.slug}/`) };
+const isRR = m.id === "rr300";
+// A shows fig. 1 as the interactive section, B shows fig. 2 in the side frame; the grid lists the remaining views.
+const others = v === "a" ? m.drawings.slice(1) : m.drawings.filter((d) => !d.title.includes("рисунок 2"));
+const parts = entriesOf(m.id).length;
 ---
 <Site v={v} title={`Реверс-редуктор ${m.name} (${m.designation})`} section="produkciya/"
   crumbs={[["produkciya/", "Наша продукция"], [`produkciya/${m.slug}/`, m.name]]}
   description={`Судовой ${m.kind} реверс-редуктор ${m.name}, заводское обозначение ${m.designation}: характеристики${m.variants.length ? ", исполнения" : ""}${m.drawings.length ? ", чертежи" : ""}, запасные части. Дизайн ${v.toUpperCase()}.`}>
-  <div class={`prod ${m.photo ? "has-photo" : "no-photo"}`}>
-    <header class="prod-head">
-      <p class="kicker">{m.kind === "гидравлический" ? "Гидравлический" : "Механический"} реверс-редуктор</p>
-      <h1>{m.name} <span class="sku prod-des" translate="no">{m.designation}</span></h1>
-      {m.text.map((t, i) => <p class={i === 0 ? "lead" : ""}>{t}</p>)}
-      <div class="btns">
-        <button type="button" class="btn" data-rfq-add data-k={rq.k} data-d={rq.d} data-n={rq.n} data-m={rq.m} data-href={rq.href} data-label="Запросить реверс-редуктор" aria-pressed="false"><Icon name="clipboard-list" size={18} /><span data-lbl>Запросить реверс-редуктор</span></button>
-        <a class="btn ghost" href={L(`zapchasti/${m.slug}/`)}>{m.hasNodeCatalog ? "Каталог узлов и деталей" : "Запасные части"}</a>
+
+  {v === "a" ? (
+    <header class="pa-head">
+      <p class="kicker">{m.kind === "гидравлический" ? "Гидравлический" : "Механический"} реверс-редуктор · <span class="sku">{m.designation}</span></p>
+      <h1>{m.name}</h1>
+      <div class="pa-intro">
+        <div>
+          {m.text.map((t, i) => <p class={i === 0 ? "lead" : ""}>{t}</p>)}
+          <div class="btns">
+            <button type="button" class="btn" data-rfq-add data-k={rq.k} data-d={rq.d} data-n={rq.n} data-m={rq.m} data-href={rq.href} data-label="Запросить реверс-редуктор" aria-pressed="false"><Icon name="clipboard-list" size={18} /><span data-lbl>Запросить реверс-редуктор</span></button>
+            <a class="btn ghost" href={L(`zapchasti/${m.slug}/`)}>{m.hasNodeCatalog ? "Каталог узлов и деталей" : `Запасные части, ${parts}`}</a>
+          </div>
+        </div>
+        <dl class="pa-keys">{m.key.map((k) => <div><dt>{k.label}</dt><dd>{k.value}</dd></div>)}{isRR && <div><dt>Исполнения</dt><dd>{m.variants.length}</dd></div>}</dl>
       </div>
     </header>
-    {m.photo && <Figure pic={m.photo} alt={m.photo.alt} caption={m.photo.caption} eager class="prod-photo" zoomLabel="Увеличить фото" />}
-    <section class="prod-specs" aria-labelledby="h-specs">
-      <h2 id="h-specs">Характеристики</h2>
-      <dl class="kv">{m.specs.map((s) => <div><dt>{s.label}</dt><dd>{s.value}</dd></div>)}</dl>
-    </section>
-  </div>
-
-  {m.variants.length > 0 && (
-    <section class="sec" id="ispolneniya" aria-labelledby="h-isp">
-      <h2 id="h-isp">Заводские исполнения</h2>
-      <p>Исполнение определяет направление вращения, передаточные отношения и соединительную муфту. В каталоге узлов количество деталей показывается для выбранного исполнения.</p>
-      <div class="tbl-wrap" tabindex="0" role="region" aria-label="Исполнения РР-300">
-        <table class="tbl isp-tbl">
-          <thead><tr><th scope="col">Обозначение</th><th scope="col">Вращение</th><th scope="col" class="q">Мощность, л.с.</th><th scope="col" class="q">Передний ход</th><th scope="col" class="q">Задний ход</th><th scope="col" class="q">Пальцев муфты</th><th scope="col"><span class="sr">Действия</span></th></tr></thead>
-          <tbody>{m.variants.map((x) => (
-            <tr>
-              <th scope="row"><span class="sku" translate="no">{x.full}</span></th><td>{x.rot}</td><td class="q">{x.hp}</td><td class="q">{x.fwd}</td><td class="q">{x.rev}</td><td class="q">{x.fingers}</td>
-              <td class="act"><a class="btn ghost sm" href={L(`zapchasti/rr-300/?isp=${encodeURIComponent(x.code)}`)}>Узлы</a>
-                <button type="button" class="btn ghost sm" data-rfq-add data-k={`model:${m.id}`} data-d={x.full} data-n={`Реверс-редуктор ${m.name}`} data-m={m.name} data-isp={x.full} data-href={rq.href} aria-pressed="false"><span data-lbl>В запрос</span><span class="sr">: {x.full}</span></button></td>
-            </tr>
-          ))}</tbody>
-        </table>
+  ) : (
+    <header class="pb-head">
+      <div>
+        <p class="kicker">{m.kind} реверс-редуктор</p>
+        <h1>{m.name} <span class="sku">{m.designation}</span></h1>
+        {m.text.map((t, i) => <p class={i === 0 ? "lead" : ""}>{t}</p>)}
       </div>
-    </section>
+      <div class="pb-actions">
+        <button type="button" class="btn" data-rfq-add data-k={rq.k} data-d={rq.d} data-n={rq.n} data-m={rq.m} data-href={rq.href} data-label="Запросить реверс-редуктор" aria-pressed="false"><Icon name="clipboard-list" size={18} /><span data-lbl>Запросить реверс-редуктор</span></button>
+        <a class="btn ghost" href={L(`zapchasti/${m.slug}/`)}>{m.hasNodeCatalog ? "Каталог узлов" : `Запасные части, ${parts}`}</a>
+        {isRR && <a class="btn ghost" href={root(MANUAL.href)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={18} />Руководство, PDF</a>}
+      </div>
+    </header>
   )}
 
-  {m.drawings.length > 0 && (
-    <section class="sec" aria-labelledby="h-draw">
-      <h2 id="h-draw">Чертежи из руководства по эксплуатации</h2>
-      <div class="draw-grid">{m.drawings.map((d) => <Figure pic={d} alt={`Чертёж: ${d.title}`} caption={d.title} title={d.title} zoomLabel="Увеличить чертёж" sizes="(min-width: 1000px) 33vw, 100vw" />)}</div>
-      <p><a class="textlink" href={root(MANUAL.href)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={18} />{MANUAL.title}, PDF, {MANUAL.pages} с.</a></p>
-    </section>
-  )}
-  {!m.drawings.length && (
-    <section class="sec note-box" aria-labelledby="h-doc">
-      <h2 id="h-doc">Документация</h2>
-      <p>Чертежи {m.name} на сайте не опубликованы. Для подбора укажите в запросе обозначение <span class="sku">{m.designation}</span>, двигатель и судно.</p>
-    </section>
-  )}
+  {v === "a" && isRR && <section class="pa-cut" aria-label="Устройство"><Cutaway id="prod-cut" /></section>}
+
+  <div class={v === "a" ? "pa-body" : "pb-body"}>
+    {v === "b" && (
+      <aside class="pb-visual">
+        {isRR ? (
+          <figure class="b-frame">
+            <p class="b-frame-top"><span>{m.name}</span><span class="sku">{m.designation}</span></p>
+            <img src={root(frontView.t.src)} srcset={`${root(frontView.t.src)} 1200w, ${root(frontView.f.src)} 2400w`} sizes="(min-width: 1000px) 30vw, 90vw" width={frontView.t.w} height={frontView.t.h} alt="Чертёж РР-300, вид со стороны фланца выходного вала" />
+            <figcaption class="b-frame-cap">Вид со стороны фланца. РР-300.РЭ, рис. 2 <a class="fig-zoom" href={root(frontView.f.src)} data-zoom data-alt="Чертёж РР-300, вид со стороны фланца выходного вала"><Icon name="arrows-maximize" size={16} />Увеличить</a></figcaption>
+          </figure>
+        ) : (
+          <div class="pb-plate"><p class="b-frame-top"><span>{m.name}</span><span class="sku">{m.designation}</span></p><p>Чертежи и фото {m.name} на сайте не опубликованы. Для подбора укажите обозначение, двигатель и судно в запросе.</p></div>
+        )}
+        {isRR && <figure class="pb-photo"><img src={root(unitPhoto.t.src)} srcset={`${root(unitPhoto.t.src)} 480w, ${root(unitPhoto.f.src)} 780w`} sizes="(min-width: 1000px) 30vw, 90vw" width={unitPhoto.t.w} height={unitPhoto.t.h} alt={unitPhoto.alt} loading="lazy" /><figcaption>РР-300, фото предприятия</figcaption></figure>}
+      </aside>
+    )}
+    <div class="p-main">
+      <section class="p-specs" aria-labelledby="h-specs">
+        <h2 id="h-specs">{v === "a" ? "Технические данные" : "Характеристики"}</h2>
+        <dl class="kv">{m.specs.map((s) => <div><dt>{s.label}</dt><dd>{s.value}</dd></div>)}</dl>
+      </section>
+      {v === "a" && isRR && (
+        <figure class="pa-photo"><img src={root(unitPhoto.f.src)} width={unitPhoto.f.w} height={unitPhoto.f.h} alt={unitPhoto.alt} loading="lazy" /><figcaption>РР-300, фото предприятия</figcaption></figure>
+      )}
+
+      {m.variants.length > 0 && (
+        <section class="sec" id="ispolneniya" aria-labelledby="h-isp">
+          <h2 id="h-isp">Заводские исполнения</h2>
+          <p>Исполнение определяет направление вращения, передаточные отношения и соединительную муфту. В каталоге узлов количество деталей показывается для выбранного исполнения.</p>
+          <div class="tbl-wrap" tabindex="0" role="region" aria-label="Исполнения РР-300">
+            <table class="tbl isp-tbl">
+              <thead><tr><th scope="col">Обозначение</th><th scope="col">Вращение</th><th scope="col" class="q">Мощность, л.с.</th><th scope="col" class="q">Передний ход</th><th scope="col" class="q">Задний ход</th><th scope="col" class="q">Пальцев муфты</th><th scope="col"><span class="sr">Действия</span></th></tr></thead>
+              <tbody>{m.variants.map((x) => (
+                <tr>
+                  <th scope="row"><span class="sku" translate="no">{x.full}</span></th><td>{x.rot}</td><td class="q">{x.hp}</td><td class="q">{x.fwd}</td><td class="q">{x.rev}</td><td class="q">{x.fingers}</td>
+                  <td class="act"><a class="btn ghost sm" href={L(`zapchasti/rr-300/?isp=${encodeURIComponent(x.code)}`)}>Узлы</a>
+                    <button type="button" class="btn ghost sm" data-rfq-add data-k={`model:${m.id}`} data-d={x.full} data-n={`Реверс-редуктор ${m.name}`} data-m={m.name} data-isp={x.full} data-href={rq.href} aria-pressed="false"><span data-lbl>В запрос</span><span class="sr">: {x.full}</span></button></td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {others.length > 0 && (
+        <section class="sec" aria-labelledby="h-draw">
+          <h2 id="h-draw">{v === "a" ? "Другие виды из руководства" : "Чертежи из руководства по эксплуатации"}</h2>
+          <div class="draw-grid">{others.map((d) => <Figure pic={d} alt={`Чертёж: ${d.title}`} caption={d.title} title={d.title} zoomLabel="Увеличить чертёж" sizes="(min-width: 1000px) 33vw, 100vw" />)}</div>
+          <p><a class="textlink" href={root(MANUAL.href)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={18} />{MANUAL.title}, PDF, {MANUAL.pages} с.</a></p>
+        </section>
+      )}
+      {!m.drawings.length && v === "a" && (
+        <section class="sec note-box" aria-labelledby="h-doc">
+          <h2 id="h-doc">Документация</h2>
+          <p>Чертежи {m.name} на сайте не опубликованы. Для подбора укажите в запросе обозначение <span class="sku">{m.designation}</span>, двигатель и судно.</p>
+        </section>
+      )}
+    </div>
+  </div>
 </Site>
