@@ -12,7 +12,8 @@
 | Overflow sweep, 8 widths × 13 page types × 2 designs | 0 pages with horizontal scroll (fixed on the way: A ledger table at 768-900 px, drawing title block on phones, B command bar at 320 px) |
 | Visual review | Viewport and full-page renders of every page type in both designs at 1440 and 390, dark theme at 1440, before/after sheets against V1-V5 (`review/audit/`). Fixed on the way: certificate number breaking, key figures colliding, empty grid cells, a hidden paragraph in B, a grey gap in B's model routes, the rail edge in dark mode. |
 | Lighthouse 12.8.2, home, local | A mobile perf 99, LCP 2.0 s · B mobile perf 99, LCP 2.0 s (after removing a stale hero-photo preload) · desktop A 98 / B 99 · accessibility and best practices 100 |
-| Firefox | not runnable on this Mac; runs in CI |
+| CI (GitHub Actions, Linux, all five projects incl. Firefox) | first run: 162 passed, 1 failed (B command bar overflowed 15 px at 1280 px with Linux fonts; fixed by hiding the phone below 1440 px); second run **163 passed, 0 failed** |
+| Live site (`PW_URL=https://siplay01.github.io/reverse-reduktor-v5-ab/`) | 132 passed, 0 failed |
 
 The first-pass report follows unchanged.
 
