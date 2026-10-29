@@ -1,0 +1,17 @@
+---
+// Real image with an explicit zoom action: the picture itself is not a click target (brandbook: zoom only on an explicit action).
+import Icon from "./Icon.astro";
+import type { Pic } from "../../lib/domain";
+import { root } from "../../lib/site";
+interface Props { pic: Pic; alt: string; title?: string; caption?: string; eager?: boolean; zoomLabel?: string; class?: string; sizes?: string }
+const { pic, alt, title = alt, caption, eager = false, zoomLabel = "Увеличить", class: cls = "", sizes } = Astro.props;
+const srcset = pic.t.src !== pic.f.src ? `${root(pic.t.src)} ${pic.t.w}w, ${root(pic.f.src)} ${pic.f.w}w` : undefined;
+---
+<figure class={`fig ${cls}`}>
+  <div class="fig-img"><img src={root(pic.t.src)} srcset={srcset} sizes={srcset ? (sizes ?? "(min-width: 1000px) 50vw, 100vw") : undefined}
+    width={pic.t.w} height={pic.t.h} alt={alt} loading={eager ? "eager" : "lazy"} fetchpriority={eager ? "high" : undefined} decoding="async" /></div>
+  <figcaption>
+    {caption && <span class="fig-cap">{caption}</span>}
+    <a class="fig-zoom" href={root(pic.f.src)} data-zoom data-alt={alt} data-title={title}><Icon name="arrows-maximize" size={16} />{zoomLabel}<span class="sr">: {title}</span></a>
+  </figcaption>
+</figure>

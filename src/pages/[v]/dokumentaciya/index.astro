@@ -1,0 +1,35 @@
+---
+import Site from "../../../layouts/Site.astro";
+import Icon from "../../../components/shared/Icon.astro";
+import CertFeature from "../../../components/shared/CertFeature.astro";
+import { perVariant } from "../../../lib/page";
+import { scans, nodes } from "../../../lib/domain";
+import { CERT, MANUAL, link, root, type V } from "../../../lib/site";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+const L = (p = "") => link(v, p);
+---
+<Site v={v} title="Техническая документация и свидетельство РКО" section="dokumentaciya/" crumbs={[["dokumentaciya/", "Документация"]]}
+  description={`Свидетельство о признании РКО № ${CERT.no}, руководство по эксплуатации РР-300, каталог деталей и сборочных единиц РР-300. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head">
+    <h1>Техническая документация</h1>
+    <p class="lead">Свидетельство о признании, руководство по эксплуатации и заводской каталог деталей РР-300.</p>
+  </header>
+  <CertFeature />
+  <section class="sec" aria-labelledby="h-docs">
+    <h2 id="h-docs">Документы</h2>
+    <div class="tbl-wrap" tabindex="0" role="region" aria-label="Документы">
+      <table class="tbl docs">
+        <thead><tr><th scope="col">Документ</th><th scope="col">Изделие</th><th scope="col">Формат</th><th scope="col"><span class="sr">Открыть</span></th></tr></thead>
+        <tbody>
+          <tr><th scope="row">{CERT.kind} РКО № {CERT.no}, действует {CERT.from}–{CERT.to}</th><td>ООО «Дело»</td><td class="nw">PDF, {CERT.pdfKb} КБ</td><td><a class="btn ghost sm" href={root(CERT.pdf)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={16} />Открыть</a></td></tr>
+          <tr><th scope="row">{MANUAL.title}</th><td>РР-300</td><td class="nw">PDF, {MANUAL.pages} с., {String(MANUAL.mb).replace(".", ",")} МБ</td><td><a class="btn ghost sm" href={root(MANUAL.href)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={16} />Открыть</a></td></tr>
+          <tr><th scope="row">Каталог деталей и сборочных единиц РР-300</th><td>РР-300</td><td class="nw">сканы, {scans.length} с.</td><td><a class="btn ghost sm" href={L("dokumentaciya/katalog-rr-300/")}>Просмотр</a></td></tr>
+          <tr><th scope="row">Чертежи и спецификации {nodes.length} узлов РР-300</th><td>РР-300</td><td class="nw">страницы сайта</td><td><a class="btn ghost sm" href={L("zapchasti/rr-300/")}>Каталог узлов</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</Site>

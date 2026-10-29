@@ -1,0 +1,75 @@
+---
+// Parts finder shared by both designs: search by designation/name, filter by model and РР-300 node; URL state; works as a full list without JS.
+import Icon from "./Icon.astro";
+import { entries as all, models, nodes, modelById, type Entry, type ModelId } from "../../lib/domain";
+import { link, type V } from "../../lib/site";
+interface Props { v: V; model?: ModelId; id?: string }
+const { v, model, id = "f" } = Astro.props;
+const list: Entry[] = model ? all.filter((e) => e.model === model) : all;
+const counts = Object.fromEntries(models.map((m) => [m.id, all.filter((e) => e.model === m.id).length]));
+const showNode = !model || model === "rr300";
+const at = (e: Entry) => e.uses.map((u) => ({ text: `рис. ${u.figure}${u.pos != null ? `, поз. ${u.pos}` : ""}`, href: link(v, `zapchasti/rr-300/${u.slug}/#poz-${u.pos}`) }));
+---
+<div class="finder" data-finder>
+  <form class="finder-form" role="search" action="" method="get">
+    <div class="field grow">
+      <label for={`${id}-q`}>Обозначение или наименование</label>
+      <input id={`${id}-q`} name="q" type="search" placeholder="Например, 525-16-110 или подшипник" autocomplete="off" spellcheck="false" enterkeyhint="search" translate="no">
+    </div>
+    {!model && (
+      <div class="field">
+        <label for={`${id}-m`}>Реверс-редуктор</label>
+        <select id={`${id}-m`} name="m">
+          <option value="">Все модели ({all.length})</option>
+          {models.map((m) => <option value={m.id}>{m.name} ({counts[m.id]})</option>)}
+        </select>
+      </div>
+    )}
+    {showNode && (
+      <div class="field">
+        <label for={`${id}-u`}>Узел РР-300</label>
+        <select id={`${id}-u`} name="uzel">
+          <option value="">Все узлы</option>
+          {nodes.map((n) => <option value={String(n.figure)}>Рис. {n.figure}. {n.title.length > 46 ? n.title.slice(0, 44) + "…" : n.title}</option>)}
+        </select>
+      </div>
+    )}
+    <div class="finder-btns">
+      <button type="submit" class="btn"><Icon name="search" size={18} />Найти</button>
+      <button type="button" class="btn ghost" data-reset>Сбросить</button>
+    </div>
+  </form>
+  <p class="finder-count" data-count aria-live="polite">Позиций в перечне: {list.length}</p>
+  <div class="tbl-wrap" data-table tabindex="0" role="region" aria-label="Перечень запасных частей">
+    <table class="tbl parts">
+      <thead><tr>
+        <th scope="col">Заводское обозначение</th><th scope="col" class="name">Наименование</th>
+        {!model && <th scope="col" class="mdl">Модель</th>}
+        {showNode && <th scope="col">Место на чертеже РР-300</th>}
+        <th scope="col"><span class="sr">Действие</span></th>
+      </tr></thead>
+      <tbody>
+        {list.map((e) => {
+          const places = at(e);
+          const mname = modelById.get(e.model)!.name;
+          const first = places[0];
+          return (
+            <tr data-k={[e.designation, ...e.spellings].join("|")} data-n={e.name} data-m={e.model} data-f={e.uses.map((u) => u.figure).join(" ")}>
+              <td class="des"><span class="sku" translate="no">{e.designation}</span><span class="name-m" aria-hidden="true">{e.name}{!model && ` · ${mname}`}</span></td>
+              <td class="name">{e.name}</td>
+              {!model && <td class="nw mdl">{mname}</td>}
+              {showNode && <td class="at">{places.length ? places.map((p, i) => <>{i > 0 && "; "}<a href={p.href} class="nw">{p.text}</a></>) : <span class="muted">–</span>}</td>}
+              <td class="act"><button type="button" class="btn ghost sm" data-rfq-add data-k={e.key} data-d={e.designation} data-n={e.name} data-m={mname}
+                data-at={places.length === 1 ? first.text : places.length ? `${places.length} места на чертежах` : ""} data-href={first?.href ?? link(v, `zapchasti/?q=${encodeURIComponent(e.designation)}`)} aria-pressed="false"><span data-lbl>В запрос</span><span class="sr">: {e.designation} {e.name}</span></button></td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+  <div class="empty" data-empty hidden>
+    <p><b>Ничего не найдено<span class="q-echo"> по запросу «<span data-empty-q></span>»</span>.</b></p>
+    <p>Проверьте обозначение (цифры, дефисы, буквы СБ, БЧ) или выберите другую модель. Если детали нет в перечне, укажите обозначение в <a href={link(v, "zapros/")}>списке запроса</a> или напишите на почту: предприятие подберёт её по документации.</p>
+    <button type="button" class="btn ghost sm" data-reset>Сбросить поиск</button>
+  </div>
+</div>

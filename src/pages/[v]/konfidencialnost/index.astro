@@ -1,0 +1,24 @@
+---
+import Site from "../../../layouts/Site.astro";
+import { perVariant } from "../../../lib/page";
+import type { V } from "../../../lib/site";
+import policy from "../../../data/policy.txt?raw";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+const lines = policy.split("\n").map((s) => s.trim()).filter(Boolean);
+const isHead = (s: string) => /^\d+\.\s/.test(s) && !/^\d+\.\d/.test(s);
+---
+<Site v={v} title="Политика обработки персональных данных" section="" crumbs={[["konfidencialnost/", "Политика обработки персональных данных"]]}
+  description={`Политика ООО «Дело» в отношении обработки персональных данных и данные, которые сайт хранит в браузере. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head"><h1>Политика обработки персональных данных</h1></header>
+  <section class="note-box" aria-labelledby="h-local">
+    <h2 id="h-local">Данные в вашем браузере</h2>
+    <p>Список запроса, черновик контактов и выбранное исполнение РР-300 хранятся только в этом браузере (localStorage) и не передаются на сервер. Счётчики посещений на сайте не установлены.</p>
+    <p><button type="button" class="btn ghost sm" data-clear-storage>Удалить сохранённые данные</button> <span data-storage-status aria-live="polite"></span></p>
+  </section>
+  <article class="prose policy">
+    {lines.map((s) => (isHead(s) ? <h2>{s}</h2> : <p>{s}</p>))}
+  </article>
+</Site>

@@ -1,0 +1,76 @@
+---
+import Site from "../../../layouts/Site.astro";
+import Icon from "../../../components/shared/Icon.astro";
+import { perVariant } from "../../../lib/page";
+import { models, rr300 } from "../../../lib/domain";
+import { link, root, type V } from "../../../lib/site";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+const L = (p = "") => link(v, p);
+const others = models.filter((m) => m.id !== "rr300");
+const val = (m: typeof rr300, l: string) => m.key.find((k) => k.label === l)?.value ?? "–";
+---
+<Site v={v} title="Наша продукция: судовые реверс-редукторы" section="produkciya/" crumbs={[["produkciya/", "Наша продукция"]]}
+  description={`Судовые реверс-редукторы РР-300, РР-238, 3Д6, 3Д12 и муфты сцепления: характеристики, исполнения, чертежи. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head">
+    <h1>Наша продукция</h1>
+    <p class="lead">Гидравлические и механические судовые реверс-редукторы для дизелей 3Д6, 3Д12, ЯМЗ и их модификаций. Изготовление и ремонт выполняет ООО «Дело».</p>
+  </header>
+  {v === "a" ? (
+    <>
+      <article class="a-prod-lead">
+        <div class="a-prod-photo"><img src={root(rr300.photo!.t.src)} srcset={`${root(rr300.photo!.t.src)} ${rr300.photo!.t.w}w, ${root(rr300.photo!.f.src)} ${rr300.photo!.f.w}w`} sizes="(min-width: 1000px) 55vw, 100vw" width={rr300.photo!.t.w} height={rr300.photo!.t.h} alt={rr300.photo!.alt} fetchpriority="high" /></div>
+        <div class="a-prod-text">
+          <p class="kicker">Гидравлический · <span class="sku">{rr300.designation}</span></p>
+          <h2><a href={L("produkciya/rr-300/")}>Реверс-редуктор {rr300.name}</a></h2>
+          {rr300.text.map((t) => <p>{t}</p>)}
+          <dl class="a-keys">{rr300.key.map((k) => <div><dt>{k.label}</dt><dd>{k.value}</dd></div>)}<div><dt>Исполнения</dt><dd>{rr300.variants.length} заводских</dd></div></dl>
+          <p class="btns"><a class="btn" href={L("produkciya/rr-300/")}>Характеристики и исполнения</a><a class="btn ghost" href={L("zapchasti/rr-300/")}>Каталог узлов</a></p>
+        </div>
+      </article>
+      <section class="a-rows" aria-labelledby="h-other">
+        <h2 id="h-other" class="sr">Другие модели</h2>
+        {others.map((m) => (
+          <article class="a-row">
+            <h3><a href={L(`produkciya/${m.slug}/`)}>{m.name}</a></h3>
+            <p class="a-row-des"><span class="sku">{m.designation}</span><span>{m.kind}</span></p>
+            <p class="a-row-text">{m.text[0]}</p>
+            <dl class="a-row-keys">{m.key.map((k) => <div><dt>{k.label}</dt><dd>{k.value}</dd></div>)}</dl>
+            <p class="a-row-links"><a href={L(`produkciya/${m.slug}/`)}>Характеристики</a><a href={L(`zapchasti/${m.slug}/`)}>Запасные части</a></p>
+          </article>
+        ))}
+      </section>
+    </>
+  ) : (
+    <>
+      <div class="tbl-wrap" tabindex="0" role="region" aria-label="Модели реверс-редукторов">
+        <table class="tbl b-models">
+          <thead><tr><th scope="col">Модель</th><th scope="col">Заводское обозначение</th><th scope="col">Тип</th><th scope="col">Мощность</th><th scope="col">Передний ход</th><th scope="col">Масса</th><th scope="col">Запасные части</th></tr></thead>
+          <tbody>{models.map((m) => (
+            <tr>
+              <th scope="row"><a href={L(`produkciya/${m.slug}/`)}>{m.name}</a></th>
+              <td><span class="sku">{m.designation}</span></td><td>{m.kind}</td>
+              <td class="nw">{val(m, "Мощность")}</td><td class="nw">{val(m, "Передний ход")}</td><td class="nw">{val(m, "Масса")}</td>
+              <td><a href={L(`zapchasti/${m.slug}/`)}>{m.hasNodeCatalog ? "26 узлов по чертежам" : "перечень"}</a></td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+      <section class="b-prod-feature" aria-labelledby="h-rr">
+        <div class="b-frame"><img src={root(rr300.photo!.t.src)} width={rr300.photo!.t.w} height={rr300.photo!.t.h} alt={rr300.photo!.alt} loading="lazy" /><p class="b-frame-cap"><span class="sku">{rr300.designation}</span> · {rr300.photo!.caption}</p></div>
+        <div>
+          <h2 id="h-rr">{rr300.name}: {rr300.variants.length} заводских исполнений</h2>
+          {rr300.text.map((t) => <p>{t}</p>)}
+          <p class="btns"><a class="btn" href={L("produkciya/rr-300/#ispolneniya")}>Таблица исполнений</a><a class="btn ghost" href={L("zapchasti/rr-300/")}>Каталог узлов</a></p>
+        </div>
+      </section>
+    </>
+  )}
+  <section class="clutch" aria-labelledby="h-clutch">
+    <h2 id="h-clutch">Муфты сцепления</h2>
+    <p>Ремонт гидравлических муфт сцепления <span class="sku">СБ525-01-14</span> и механических <span class="sku">СБ1226-00-2</span>. Изготовление муфт и их деталей: по запросу с указанием обозначения.</p>
+    <p><a class="textlink" href={L("uslugi/#remont")}>Ремонт и порядок работ <Icon name="arrow-right" size={16} /></a></p>
+  </section>
+</Site>

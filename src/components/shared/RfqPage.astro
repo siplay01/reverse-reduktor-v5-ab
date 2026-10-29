@@ -1,0 +1,68 @@
+---
+// Request list: lines from the catalog + manual lines, contact fields, text preview.
+// Leaves the site only by copy, .txt download or an explicit mailto: click. Never shows «sent».
+import Icon from "./Icon.astro";
+import { COMPANY, link, type V } from "../../lib/site";
+const { v } = Astro.props as { v: V };
+---
+<div class="rfq" data-rfq-page data-email={COMPANY.email}>
+  <div class="empty" data-empty-list>
+    <p><b>Список запроса пуст.</b></p>
+    <p>Добавьте детали кнопкой «В запрос» в <a href={link(v, "zapchasti/")}>перечне запасных частей</a> или на <a href={link(v, "zapchasti/rr-300/")}>чертежах узлов РР-300</a>, либо впишите позицию вручную ниже.</p>
+  </div>
+  <div data-has-list hidden>
+    <div class="tbl-wrap" tabindex="0" role="region" aria-label="Позиции запроса">
+      <table class="tbl rfq-tbl">
+        <thead><tr>
+          <th scope="col">Заводское обозначение</th><th scope="col">Наименование</th><th scope="col">Место в каталоге</th>
+          <th scope="col">Исполнение</th><th scope="col" class="q">Кол. на одно изделие</th><th scope="col" class="q">Запрашиваемое количество</th><th scope="col"><span class="sr">Удалить</span></th>
+        </tr></thead>
+        <tbody data-rows></tbody>
+      </table>
+    </div>
+    <p class="rfq-total" data-total></p>
+    <button type="button" class="btn ghost sm" data-clear><Icon name="trash" size={16} /><span data-lbl>Очистить список</span></button>
+  </div>
+  <template><tr>
+    <td class="des"><span class="sku" translate="no" data-d></span></td>
+    <td class="name"><a data-link></a></td>
+    <td data-at></td>
+    <td class="nw sku" data-isp></td>
+    <td class="q" data-per></td>
+    <td class="q"><label class="sr"></label><input type="number" inputmode="numeric" min="1" max="99999" step="1" class="qty"></td>
+    <td><button type="button" class="btn ghost sm icon" data-del><Icon name="trash" size={16} /></button></td>
+  </tr></template>
+
+  <details class="manual">
+    <summary>Добавить позицию, которой нет в каталоге</summary>
+    <form class="manual-form" data-manual>
+      <div class="field"><label for="m-d">Обозначение</label><input id="m-d" name="md" required autocomplete="off" spellcheck="false" translate="no"></div>
+      <div class="field grow"><label for="m-n">Наименование</label><input id="m-n" name="mn" autocomplete="off"></div>
+      <div class="field"><label for="m-q">Количество</label><input id="m-q" name="mq" type="number" inputmode="numeric" min="1" max="99999" value="1"></div>
+      <button class="btn ghost" type="submit">Добавить в список</button>
+    </form>
+  </details>
+
+  <form class="rfq-form" novalidate data-rfq-form>
+    <h2>Контакты для ответа</h2>
+    <div class="grid2">
+      <div class="field"><label for="r-name">Контактное лицо</label><input id="r-name" name="name" autocomplete="name"></div>
+      <div class="field"><label for="r-org">Организация</label><input id="r-org" name="org" autocomplete="organization"></div>
+      <div class="field"><label for="r-tel">Телефон</label><input id="r-tel" name="tel" type="tel" autocomplete="tel" aria-describedby="r-hint r-err"></div>
+      <div class="field"><label for="r-email">E-mail</label><input id="r-email" name="email" type="email" autocomplete="email" aria-describedby="r-hint r-err"></div>
+    </div>
+    <p class="hint" id="r-hint">Нужен телефон или e-mail.</p>
+    <div class="field"><label for="r-note">Комментарий: судно, двигатель, сроки, номер закупки</label><textarea id="r-note" name="note" rows="3"></textarea></div>
+    <p class="err" id="r-err" data-err hidden role="alert"></p>
+    <div class="rfq-actions">
+      <a class="btn" data-mail href={`mailto:${COMPANY.email}`}><Icon name="mail" size={18} />Открыть письмо в почтовой программе</a>
+      <button type="button" class="btn ghost" data-copy><Icon name="copy" size={18} />Скопировать текст</button>
+      <button type="button" class="btn ghost" data-download><Icon name="file-download" size={18} />Скачать .txt</button>
+    </div>
+    <p class="hint" data-long hidden>Список длинный: почтовая программа может обрезать письмо. Надёжнее скопировать текст или скачать файл и приложить его к письму на {COMPANY.email}.</p>
+    <p class="status" data-status aria-live="polite"></p>
+    <p class="hint">Сайт не отправляет запрос сам и не хранит его на сервере: список и черновик остаются только в этом браузере. <a href={link(v, "konfidencialnost/")}>Политика обработки персональных данных</a>.</p>
+  </form>
+  <h2 class="pre-h">Текст запроса</h2>
+  <pre class="preview" data-preview tabindex="0"></pre>
+</div>

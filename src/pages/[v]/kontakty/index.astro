@@ -1,0 +1,31 @@
+---
+import Site from "../../../layouts/Site.astro";
+import Icon from "../../../components/shared/Icon.astro";
+import Requisites from "../../../components/shared/Requisites.astro";
+import { perVariant } from "../../../lib/page";
+import { COMPANY, link, type V } from "../../../lib/site";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+const map = `https://yandex.ru/maps/?text=${encodeURIComponent(COMPANY.address)}`;
+---
+<Site v={v} title="Контакты и реквизиты ООО «Дело»" section="kontakty/" crumbs={[["kontakty/", "Контакты и реквизиты"]]}
+  description={`Телефон, e-mail, адрес и полные реквизиты ООО «Дело», г. Барнаул: ИНН ${COMPANY.inn}, ОГРН ${COMPANY.ogrn}, банковские реквизиты. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head"><h1>Контакты и реквизиты</h1></header>
+  <div class="contacts">
+    <section aria-labelledby="h-c">
+      <h2 id="h-c">{COMPANY.operator}</h2>
+      <ul class="c-list">
+        <li><Icon name="phone" size={20} /><a href={`tel:${COMPANY.tel}`} class="big">{COMPANY.phone}</a></li>
+        <li><Icon name="mail" size={20} /><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></li>
+        <li><Icon name="map-pin" size={20} /><span>{COMPANY.address}<br><a href={map} target="_blank" rel="noopener">Открыть на Яндекс Картах<Icon name="external-link" size={14} /></a></span></li>
+      </ul>
+      <p>Для запроса по запасным частям удобнее собрать <a href={link(v, "zapros/")}>список запроса</a>: в письмо попадут обозначения, исполнение и количество.</p>
+    </section>
+    <section id="rekvizity" aria-labelledby="h-r">
+      <h2 id="h-r">Реквизиты</h2>
+      <Requisites />
+    </section>
+  </div>
+</Site>

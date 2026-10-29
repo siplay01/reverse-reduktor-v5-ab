@@ -1,0 +1,27 @@
+{
+  "name": "reverse-reduktor-v5-ab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test:unit": "node --experimental-strip-types qa/unit.test.ts",
+    "test:static": "node qa/links.mjs",
+    "test:e2e": "playwright test",
+    "test": "npm run test:unit && npm run test:static && playwright test"
+  },
+  "dependencies": {
+    "@fontsource-variable/golos-text": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@tabler/icons": "^3.50.0",
+    "astro": "^5.18.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "typescript": "^5.9.3"
+  }
+}

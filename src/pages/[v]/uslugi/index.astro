@@ -1,0 +1,41 @@
+---
+import Site from "../../../layouts/Site.astro";
+import Icon from "../../../components/shared/Icon.astro";
+import Figure from "../../../components/shared/Figure.astro";
+import { perVariant } from "../../../lib/page";
+import { services, workshopPhoto } from "../../../lib/domain";
+import { COMPANY, CERT, link, type V } from "../../../lib/site";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+const L = (p = "") => link(v, p);
+const mail = (s: string) => `mailto:${COMPANY.email}?subject=${encodeURIComponent(s)}`;
+---
+<Site v={v} title="Услуги: ремонт, изготовление деталей, техническая документация" section="uslugi/" crumbs={[["uslugi/", "Услуги"]]}
+  description={`Ремонт судовых реверс-редукторов и рулевых машин РГ-0,25, изготовление деталей судового машиностроения, разработка технической документации, техническая поддержка. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head">
+    <h1>Услуги</h1>
+    <p class="lead">Работы, отмеченные знаком РКО, входят в область признания по свидетельству <a href={L("dokumentaciya/#rko")}>№ {CERT.no}</a> (до {CERT.to}).</p>
+  </header>
+  <div class="svc-layout">
+    <ol class="svc-list">
+      {services.map((s) => (
+        <li id={s.id} class="svc">
+          <h2>{s.title}</h2>
+          {s.rko && <p class="rko-tag"><Icon name="certificate" size={16} />Входит в область признания РКО</p>}
+          {s.text.map((t) => <p>{t}</p>)}
+          <p><a class="textlink" href={mail(s.title)}><Icon name="mail" size={16} />Написать о задаче</a></p>
+        </li>
+      ))}
+    </ol>
+    <aside class="svc-aside">
+      <Figure pic={workshopPhoto} alt={workshopPhoto.alt} caption="Реверс-редуктор на участке предприятия" zoomLabel="Увеличить фото" />
+      <div class="svc-how">
+        <h2>Как заказать ремонт</h2>
+        <p>Укажите модель и заводское обозначение, исполнение, неисправность; приложите фото шильдика и узла. Объём работ и стоимость согласуются до начала ремонта.</p>
+        <p class="btns"><a class="btn" href={mail("Ремонт реверс-редуктора")}><Icon name="mail" size={18} />{COMPANY.email}</a><a class="btn ghost" href={`tel:${COMPANY.tel}`}><Icon name="phone" size={18} />{COMPANY.phone}</a></p>
+      </div>
+    </aside>
+  </div>
+</Site>

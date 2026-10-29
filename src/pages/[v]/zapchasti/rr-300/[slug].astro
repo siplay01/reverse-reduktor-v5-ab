@@ -1,0 +1,42 @@
+---
+import Site from "../../../../layouts/Site.astro";
+import Icon from "../../../../components/shared/Icon.astro";
+import Figure from "../../../../components/shared/Figure.astro";
+import NodeSpec from "../../../../components/shared/NodeSpec.astro";
+import { perVariant } from "../../../../lib/page";
+import { nodes, rr300, type Node } from "../../../../lib/domain";
+import { link, root, type V } from "../../../../lib/site";
+export function getStaticPaths() {
+  return perVariant(() => nodes.map((n) => ({ params: { slug: n.slug }, props: { n } })));
+}
+const { v, n } = Astro.props as { v: V; n: Node };
+const L = (p = "") => link(v, p);
+const prev = nodes.find((x) => x.figure === n.figure - 1);
+const next = nodes.find((x) => x.figure === n.figure + 1);
+const unit = n.designation && n.designation !== rr300.designation ? n.designation : "";
+---
+<Site v={v} title={`РР-300, рис. ${n.figure}. ${n.title}`} section="zapchasti/"
+  crumbs={[["zapchasti/", "Запасные части"], ["zapchasti/rr-300/", "РР-300"], [`zapchasti/rr-300/${n.slug}/`, `Рис. ${n.figure}`]]}
+  description={`Реверс-редуктор РР-300, рис. ${n.figure}: ${n.title}. Чертёж узла, спецификация по заводскому каталогу, количество по исполнениям. Дизайн ${v.toUpperCase()}.`}>
+  <div class="node">
+    <header class="node-head">
+      <p class="kicker">РР-300 <span class="sku">{rr300.designation}</span> · рис. {n.figure} из {nodes.length}</p>
+      <h1>{n.title}</h1>
+      <p class="muted">{unit ? <>Сборочная единица <span class="sku">{unit}</span>. </> : ""}Позиций в спецификации: {n.rows.length}.</p>
+      <nav class="pager" aria-label="Соседние узлы">
+        {prev ? <a href={L(`zapchasti/rr-300/${prev.slug}/`)} data-keep-isp><Icon name="arrow-left" size={16} /><span>Рис. {prev.figure}</span></a> : <span></span>}
+        <a href={L("zapchasti/rr-300/")}>Все узлы</a>
+        {next ? <a href={L(`zapchasti/rr-300/${next.slug}/`)} data-keep-isp><span>Рис. {next.figure}</span><Icon name="arrow-right" size={16} /></a> : <span></span>}
+      </nav>
+    </header>
+    <div class="node-drawing">
+      <Figure pic={n.drawing} eager alt={`Чертёж узла РР-300, рис. ${n.figure}: ${n.title}. Номера позиций соответствуют спецификации`} title={`Рис. ${n.figure}. ${n.title}`}
+        caption={`Рис. ${n.figure}. Номера на чертеже соответствуют графе «Поз.»`} zoomLabel="Увеличить чертёж" sizes="(min-width: 1280px) 45vw, 100vw" />
+      <p class="scan-link"><a class="fig-zoom" href={root(n.spec.f.src)} data-zoom data-alt={`Скан спецификации к рис. ${n.figure}`} data-title={`Спецификация к рис. ${n.figure}, скан каталога`}><Icon name="file-text" size={16} />Скан спецификации из каталога</a></p>
+    </div>
+    <section class="node-spec" aria-labelledby="h-spec">
+      <h2 id="h-spec">Спецификация</h2>
+      <NodeSpec v={v} node={n} />
+    </section>
+  </div>
+</Site>

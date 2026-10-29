@@ -1,0 +1,27 @@
+---
+import Site from "../../../../layouts/Site.astro";
+import Icon from "../../../../components/shared/Icon.astro";
+import { perVariant } from "../../../../lib/page";
+import { scans } from "../../../../lib/domain";
+import { root, type V } from "../../../../lib/site";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+---
+<Site v={v} title="Каталог деталей и сборочных единиц РР-300: сканы" section="dokumentaciya/"
+  crumbs={[["dokumentaciya/", "Документация"], ["dokumentaciya/katalog-rr-300/", "Каталог РР-300"]]}
+  description={`Все ${scans.length} страниц заводского каталога деталей и сборочных единиц реверс-редуктора РР-300 в исходном виде. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head">
+    <h1>Каталог деталей и сборочных единиц РР-300</h1>
+    <p class="lead">{scans.length} страниц в исходном виде. Каждую страницу можно открыть в полном разрешении.</p>
+  </header>
+  <ol class="scans">
+    {scans.map((s) => (
+      <li>
+        <img src={root(s.t.src)} width={s.t.w} height={s.t.h} alt={`Каталог РР-300, страница ${s.n}: ${s.title}`} loading="lazy" decoding="async" />
+        <p><span>С. {s.n}</span> <a class="fig-zoom" href={root(s.f.src)} data-zoom data-alt={`Каталог РР-300, страница ${s.n}`}><Icon name="arrows-maximize" size={16} />Открыть<span class="sr"> страницу {s.n}</span></a></p>
+      </li>
+    ))}
+  </ol>
+</Site>

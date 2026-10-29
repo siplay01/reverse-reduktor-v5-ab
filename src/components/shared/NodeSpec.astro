@@ -1,0 +1,71 @@
+---
+// Specification of one РР-300 node, exactly as in the factory catalog: drawing position, factory designation, name,
+// quantity on ONE gearbox for the chosen factory variant (all variants on request), mass, material.
+// Without JS every variant column is visible; with JS one column follows the variant selector.
+import Icon from "./Icon.astro";
+import { FACTORY_VARIANTS, type Node } from "../../lib/domain";
+import { link, type V } from "../../lib/site";
+interface Props { v: V; node: Node }
+const { v, node: n } = Astro.props;
+const fv = n.byFactoryVariant;
+const multi = n.variants.length > 1;
+const href = (pos: number | null) => link(v, `zapchasti/rr-300/${n.slug}/#poz-${pos}`);
+const where = (pos: number | null) => `рис. ${n.figure}${pos != null ? `, поз. ${pos}` : ""}`;
+---
+<div class={`spec ${fv ? "by-isp" : ""}`} data-isp-root={fv ? "" : undefined}>
+  {fv && (
+    <div class="isp-panel">
+      <div class="field">
+        <label for="isp">Исполнение реверс-редуктора</label>
+        <select id="isp" data-isp-select>
+          {FACTORY_VARIANTS.map((x) => <option value={x.code} data-short={x.full} data-full={x.full}>{x.label}</option>)}
+        </select>
+      </div>
+      <p class="isp-note">Количество в таблице указано на одно изделие исполнения <b class="sku" translate="no" data-isp-note>{FACTORY_VARIANTS[0].full}</b>. Прочерк: деталь в это исполнение не входит.</p>
+      <button type="button" class="btn ghost sm" data-compare aria-pressed="false"><Icon name="table" size={16} /><span data-lbl>Сравнить все исполнения</span></button>
+    </div>
+  )}
+  {!fv && multi && <p class="isp-note">Исполнения узла по каталогу: {n.variants.map((c, i) => <>{i > 0 && ", "}<span class="sku">{c === "-" ? n.designation : n.designation + c}</span></>)}. Количество указано на одно изделие.</p>}
+  <button type="button" class="btn ghost sm opt-toggle" data-opt-toggle aria-pressed="false"><span data-lbl>Показать массу и материал</span></button>
+  <div class="tbl-wrap" tabindex="0" role="region" aria-label={`Спецификация, рис. ${n.figure}`}>
+    <table class="tbl nodes">
+      <caption class="sr">Спецификация к рис. {n.figure} каталога РР-300: {n.title}</caption>
+      <thead><tr>
+        <th scope="col" class="pos">Поз.</th>
+        <th scope="col">Заводское обозначение</th>
+        <th scope="col" class="name">Наименование</th>
+        {fv && <th scope="col" class="q sel"><span class="th-l">Кол. на изделие</span><span class="th-s sku" data-sel-head>{FACTORY_VARIANTS[0].full}</span></th>}
+        {n.variants.map((c) => <th scope="col" class="q vc" data-vc><span class="sku">{fv ? (c === "-" ? n.designation : c) : multi ? (c === "-" ? n.designation : c) : "Кол. на изделие"}</span></th>)}
+        <th scope="col" class="act-h"><span class="sr">Действие</span></th>
+        <th scope="col" class="q opt">Масса, кг</th>
+        <th scope="col" class="opt">Материал</th>
+      </tr></thead>
+      <tbody>
+        {n.rows.map((r) => {
+          const q = r.qty ?? n.variants.map(() => null);
+          const single = !fv && !multi ? q[0] : null;
+          const isBch = r.designation === "БЧ";
+          return (
+            <tr id={`poz-${r.pos}`} data-q={JSON.stringify(q)}>
+              <th scope="row" class="pos">{r.pos ?? ""}</th>
+              <td class="des"><span class="sku" translate="no">{r.designation}</span>{r.note && <sup title="примечание под таблицей">{r.note}</sup>}<span class="name-m" aria-hidden="true">{r.name}</span></td>
+              <td class="name">{r.name}</td>
+              {fv && <td class="q sel" data-sel>{q[0] ?? "–"}</td>}
+              {q.map((x) => <td class={`q vc ${x == null ? "none" : ""}`} data-vc>{x ?? "–"}</td>)}
+              <td class="act">
+                <button type="button" class="btn ghost sm" data-rfq-add
+                  data-k={`rr300:${isBch ? "БЧ|" + r.name : r.designation}`} data-d={r.designation} data-n={r.name} data-m="РР-300"
+                  data-at={where(r.pos)} data-href={href(r.pos)}
+                  data-isp={fv ? FACTORY_VARIANTS[0].full : ""} data-per={fv ? (q[0] ?? undefined) : (single ?? undefined)}
+                  aria-pressed="false"><span data-lbl>В запрос</span><span class="sr">: поз. {r.pos}, {r.designation} {r.name}</span></button>
+              </td>
+              <td class="q opt">{r.mass ?? ""}</td>
+              <td class="opt">{r.material ?? ""}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+  {Object.keys(n.footnotes).length > 0 && <div class="fns">{Object.entries(n.footnotes).map(([k, t]) => <p><sup>{k}</sup> {t}</p>)}</div>}
+</div>

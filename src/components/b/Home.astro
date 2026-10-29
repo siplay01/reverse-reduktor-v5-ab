@@ -1,0 +1,83 @@
+---
+import Icon from "../shared/Icon.astro";
+import { models, rr300, nodes, services, scans } from "../../lib/domain";
+import { COMPANY, CERT, MANUAL, link, root } from "../../lib/site";
+const L = (p = "") => link("b", p);
+const ph = rr300.photo!;
+const val = (m: typeof rr300, l: string) => m.key.find((k) => k.label === l)?.value ?? "–";
+const EX = ["525-16-110", "СБ525-12-104", "подшипник"];
+---
+<section class="b-hero" aria-labelledby="b-h1"><div class="wrap b-hero-grid">
+  <div class="b-hero-main">
+    <p class="b-label">{COMPANY.operator} · {COMPANY.tagline.toLowerCase()}</p>
+    <h1 id="b-h1">Реверс-редукторы и запасные части по заводским чертежам</h1>
+    <p class="b-hero-sub">Оборудование · Запасные части · Техническая документация</p>
+    <form class="b-search" role="search" action={L("zapchasti/")} method="get">
+      <label for="b-q">Поиск по заводскому обозначению или наименованию</label>
+      <div class="b-search-row"><input id="b-q" name="q" type="search" placeholder="Например, 525-16-110" autocomplete="off" spellcheck="false" enterkeyhint="search"><button class="btn" type="submit"><Icon name="search" size={18} />Найти</button></div>
+      <p class="b-ex">Примеры: {EX.map((e, i) => <>{i > 0 && ", "}<a href={L(`zapchasti/?q=${encodeURIComponent(e)}`)}>{e}</a></>)}</p>
+    </form>
+    <p class="btns"><a class="btn ghost" href={L("produkciya/")}>Наша продукция</a><a class="btn ghost" href={L("zapchasti/rr-300/")}>Каталог РР-300: {nodes.length} узлов</a></p>
+  </div>
+  <figure class="b-frame b-hero-frame">
+    <p class="b-frame-top"><span>РР-300</span><span class="sku">{rr300.designation}</span></p>
+    <img src={root(ph.t.src)} srcset={`${root(ph.t.src)} ${ph.t.w}w, ${root(ph.f.src)} ${ph.f.w}w`} sizes="(min-width: 1000px) 40vw, 100vw" width={ph.t.w} height={ph.t.h} alt={ph.alt} fetchpriority="high" />
+    <figcaption class="b-frame-cap">{ph.caption} в цехе предприятия</figcaption>
+  </figure>
+</div></section>
+
+<div class="wrap">
+  <div class="b-info">
+    <section class="b-cert-panel" aria-labelledby="b-cert-h">
+      <img src={root(CERT.img.t.src)} width={CERT.img.t.w} height={CERT.img.t.h} alt={`Миниатюра свидетельства РКО № ${CERT.no}`} loading="lazy" />
+      <div>
+        <h2 id="b-cert-h">Свидетельство о признании РКО № {CERT.no}</h2>
+        <p class="num">{CERT.from}–{CERT.to}</p>
+        <p class="b-links"><a href={root(CERT.pdf)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={16} />PDF</a><a href={L("dokumentaciya/#rko")}>Область признания</a></p>
+      </div>
+    </section>
+    <section class="b-panel" aria-labelledby="b-proc-h">
+      <h2 id="b-proc-h">Закупки и тендеры</h2>
+      <p>Документы участника и реквизиты ООО «Дело» для заявки.</p>
+      <p class="b-links"><a href={L("zakupki/")}>Документы участника</a><a href={L("kontakty/#rekvizity")}>Реквизиты</a></p>
+    </section>
+    <section class="b-panel" aria-labelledby="b-con-h">
+      <h2 id="b-con-h">Связь</h2>
+      <p><a href={`tel:${COMPANY.tel}`} class="big">{COMPANY.phone}</a><br><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></p>
+    </section>
+  </div>
+
+  <section class="b-sec" aria-labelledby="b-eq-h">
+    <header class="b-sec-head"><p class="b-idx">Модели и характеристики</p><h2 id="b-eq-h">Оборудование</h2><a class="textlink" href={L("produkciya/")}>Все модели <Icon name="arrow-right" size={16} /></a></header>
+    <div class="tbl-wrap" tabindex="0" role="region" aria-label="Модели реверс-редукторов">
+      <table class="tbl b-models">
+        <thead><tr><th scope="col">Модель</th><th scope="col">Обозначение</th><th scope="col">Тип</th><th scope="col">Мощность</th><th scope="col">Передний ход</th><th scope="col">Масса</th></tr></thead>
+        <tbody>{models.map((m) => (
+          <tr><th scope="row"><a href={L(`produkciya/${m.slug}/`)}>{m.name}</a></th><td><span class="sku">{m.designation}</span></td><td>{m.kind}</td><td class="nw">{val(m, "Мощность")}</td><td class="nw">{val(m, "Передний ход")}</td><td class="nw">{val(m, "Масса")}</td></tr>
+        ))}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="b-sec" aria-labelledby="b-sp-h">
+    <header class="b-sec-head"><p class="b-idx">Каталог по чертежам</p><h2 id="b-sp-h">Запасные части РР-300: индекс узлов</h2><a class="textlink" href={L("zapchasti/")}>Поиск по всем моделям <Icon name="arrow-right" size={16} /></a></header>
+    <ol class="b-index">{nodes.map((n) => <li><a href={L(`zapchasti/rr-300/${n.slug}/`)} data-keep-isp><span class="b-no">{n.figure}</span><span>{n.title}</span></a></li>)}</ol>
+    <p class="b-more">Перечни 3Д6, 3Д12 и РР-238: <a href={L("zapchasti/3d6/")}>3Д6</a>, <a href={L("zapchasti/3d12/")}>3Д12</a>, <a href={L("zapchasti/rr-238/")}>РР-238</a>.</p>
+  </section>
+
+  <section class="b-sec b-two" aria-labelledby="b-svc-h">
+    <div>
+      <header class="b-sec-head"><h2 id="b-svc-h">Услуги</h2></header>
+      <dl class="b-svc">{services.map((s) => <div><dt><a href={L(`uslugi/#${s.id}`)}>{s.title}</a></dt><dd>{s.text[0]}</dd></div>)}</dl>
+    </div>
+    <div>
+      <header class="b-sec-head"><h2 id="b-doc-h">Документация</h2></header>
+      <ul class="b-docs">
+        <li><a href={root(CERT.pdf)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={18} />Свидетельство РКО № {CERT.no}</a><span>PDF, {CERT.pdfKb} КБ</span></li>
+        <li><a href={root(MANUAL.href)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={18} />Руководство по эксплуатации РР-300</a><span>PDF, {MANUAL.pages} с.</span></li>
+        <li><a href={L("dokumentaciya/katalog-rr-300/")}><Icon name="file-text" size={18} />Каталог деталей РР-300, сканы</a><span>{scans.length} с.</span></li>
+        <li><a href={root("rekvizity.txt")} download="rekvizity-ooo-delo.txt"><Icon name="file-download" size={18} />Карточка предприятия</a><span>TXT</span></li>
+      </ul>
+    </div>
+  </section>
+</div>

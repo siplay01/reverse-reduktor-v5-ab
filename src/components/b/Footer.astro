@@ -1,0 +1,27 @@
+---
+import { COMPANY, CERT, link, root } from "../../lib/site";
+import { NAV, NAV2 } from "../../lib/nav";
+const L = (p = "") => link("b", p);
+---
+<footer class="b-footer"><div class="wrap">
+  <div class="b-f-grid">
+    <div>
+      <p class="b-f-h">{COMPANY.brand}</p>
+      <p>{COMPANY.operator}: изготовление, ремонт и запасные части судовых реверс-редукторов.</p>
+    </div>
+    <div>
+      <p class="b-f-h">Разделы</p>
+      <ul>{[...NAV, ...NAV2].map(([p, n]) => <li><a href={L(p)}>{n}</a></li>)}</ul>
+    </div>
+    <div>
+      <p class="b-f-h">Связь</p>
+      <ul><li><a href={`tel:${COMPANY.tel}`}>{COMPANY.phone}</a></li><li><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></li><li>{COMPANY.address}</li></ul>
+    </div>
+    <div>
+      <p class="b-f-h">Предприятие</p>
+      <dl class="b-f-req"><dt>ИНН</dt><dd>{COMPANY.inn}</dd><dt>КПП</dt><dd>{COMPANY.kpp}</dd><dt>ОГРН</dt><dd>{COMPANY.ogrn}</dd><dt>РКО</dt><dd>№ {CERT.no}</dd></dl>
+      <p><a href={L("kontakty/#rekvizity")}>Все реквизиты</a></p>
+    </div>
+  </div>
+  <div class="b-f-legal"><a href={L("konfidencialnost/")}>Политика обработки персональных данных</a><a href={root()}>Сравнение дизайнов A и B</a></div>
+</div></footer>

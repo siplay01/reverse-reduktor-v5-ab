@@ -1,0 +1,26 @@
+---
+import "@fontsource-variable/golos-text/index.css";
+import "../styles/base.css";
+import { root } from "../lib/site";
+---
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Страница не найдена | Реверс-редуктор</title><meta name="description" content="Страница не найдена."><meta name="robots" content="noindex"><meta name="color-scheme" content="light dark"></head>
+<body class="chooser">
+<main class="wrap">
+  <p class="kicker">Ошибка 404</p>
+  <h1>Страница не найдена</h1>
+  <p class="lead">Адрес изменился или набран с ошибкой. Деталь можно найти по заводскому обозначению.</p>
+  <form action={root("a/zapchasti/")} method="get" class="nf-search" role="search">
+    <label for="nf-q">Обозначение или наименование</label>
+    <input id="nf-q" name="q" type="search" placeholder="Например, 525-16-110">
+    <button class="btn" type="submit">Найти</button>
+  </form>
+  <ul class="nf-links">
+    <li>Дизайн A: <a href={root("a/")}>главная</a>, <a href={root("a/zapchasti/")}>запасные части</a>, <a href={root("a/kontakty/")}>контакты</a></li>
+    <li>Дизайн B: <a href={root("b/")}>главная</a>, <a href={root("b/zapchasti/")}>запасные части</a>, <a href={root("b/kontakty/")}>контакты</a></li>
+  </ul>
+</main>
+</body>
+</html>

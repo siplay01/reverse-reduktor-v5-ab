@@ -1,0 +1,37 @@
+---
+import Site from "../../../layouts/Site.astro";
+import Icon from "../../../components/shared/Icon.astro";
+import Finder from "../../../components/shared/Finder.astro";
+import { perVariant } from "../../../lib/page";
+import { models, nodes, entriesOf } from "../../../lib/domain";
+import { link, root, type V } from "../../../lib/site";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+const L = (p = "") => link(v, p);
+const n1 = nodes[0];
+---
+<Site v={v} title="Запасные части: поиск по заводскому обозначению" section="zapchasti/" crumbs={[["zapchasti/", "Запасные части"]]}
+  description={`Запасные части к реверс-редукторам РР-300, РР-238, 3Д6, 3Д12: поиск по обозначению, названию, модели и узлу; каталог РР-300 из 26 чертежей. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head">
+    <h1>Запасные части</h1>
+    <p class="lead">Поиск по заводскому обозначению, наименованию, модели и узлу. Для РР-300 позиции привязаны к оригинальным чертежам и спецификациям заводского каталога.</p>
+  </header>
+  <section class="routes" aria-label="Каталоги по моделям">
+    <a class="route-main" href={L("zapchasti/rr-300/")}>
+      <img src={root(n1.drawing.t.src)} width={n1.drawing.t.w} height={n1.drawing.t.h} alt="" loading="lazy" />
+      <span class="route-t"><b>РР-300: каталог по заводским чертежам</b><span>{nodes.length} узлов, чертёж и спецификация каждого, количество по 10 исполнениям</span></span>
+      <Icon name="arrow-right" size={22} />
+    </a>
+    <ul class="route-list">
+      {models.filter((m) => !m.hasNodeCatalog).map((m) => (
+        <li><a href={L(`zapchasti/${m.slug}/`)}><b>{m.name}</b> <span class="sku">{m.designation}</span><span class="muted">перечень, {entriesOf(m.id).length} поз.</span></a></li>
+      ))}
+    </ul>
+  </section>
+  <section class="sec" aria-labelledby="h-find">
+    <h2 id="h-find">Поиск по всем моделям</h2>
+    <Finder v={v} />
+  </section>
+</Site>

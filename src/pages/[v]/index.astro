@@ -1,0 +1,18 @@
+---
+import Site from "../../layouts/Site.astro";
+import HomeA from "../../components/a/Home.astro";
+import HomeB from "../../components/b/Home.astro";
+import { perVariant } from "../../lib/page";
+import { root, type V } from "../../lib/site";
+import { rr300 } from "../../lib/domain";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+const ph = rr300.photo!;
+const preload = { srcset: `${root(ph.t.src)} ${ph.t.w}w, ${root(ph.f.src)} ${ph.f.w}w`, sizes: v === "a" ? "(min-width: 1000px) 45vw, 100vw" : "(min-width: 1000px) 40vw, 100vw" };
+---
+<Site v={v} wide preload={preload} title="Реверс-редуктор: судовые реверс-редукторы РР-300, РР-238, 3Д6, 3Д12 от ООО «Дело»"
+  description={`Изготовление, ремонт и запасные части судовых реверс-редукторов РР-300, РР-238, 3Д6, 3Д12. Каталог РР-300 по заводским чертежам, свидетельство РКО № 06552. Дизайн ${v.toUpperCase()}.`}>
+  {v === "a" ? <HomeA /> : <HomeB />}
+</Site>

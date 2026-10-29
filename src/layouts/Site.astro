@@ -1,0 +1,76 @@
+---
+// Page shell for both designs. Head, viewer dialog, toast and the client engine are shared; header and footer are per design.
+import "@fontsource-variable/golos-text/index.css";
+import "@fontsource-variable/jetbrains-mono/index.css";
+import "../styles/base.css";
+import "../styles/a.css";
+import "../styles/b.css";
+import golosCyr from "@fontsource-variable/golos-text/files/golos-text-cyrillic-wght-normal.woff2?url";
+import HeaderA from "../components/a/Header.astro";
+import FooterA from "../components/a/Footer.astro";
+import HeaderB from "../components/b/Header.astro";
+import FooterB from "../components/b/Footer.astro";
+import Icon from "../components/shared/Icon.astro";
+import { COMPANY, SETTINGS, link, root, type V } from "../lib/site";
+
+interface Props { v: V; title: string; description: string; section?: string; crumbs?: [string, string][]; wide?: boolean; preload?: { srcset: string; sizes: string } }
+const { v, title, description, section = "", crumbs = [], wide = false, preload } = Astro.props;
+const fullTitle = title.includes(COMPANY.brand) ? title : `${title} | ${COMPANY.brand}`;
+const trail: [string, string][] = crumbs.length ? [["", "Главная"], ...crumbs] : [];
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+<!doctype html>
+<html lang="ru" data-v={v}>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{fullTitle}</title>
+<meta name="description" content={description}>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content={SETTINGS.indexable ? "index, follow" : "noindex, nofollow"}>
+<link rel="canonical" href={canonical}>
+<link rel="preload" href={golosCyr} as="font" type="font/woff2" crossorigin>
+{preload && <link rel="preload" as="image" imagesrcset={preload.srcset} imagesizes={preload.sizes} fetchpriority="high">}
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content={v === "a" ? "#102B3A" : "#F6F8FA"} media="(prefers-color-scheme: light)">
+<meta name="theme-color" content={v === "a" ? "#0B1E29" : "#0F1824"} media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content={COMPANY.brand}>
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<link rel="icon" href={root("favicon.svg")} type="image/svg+xml">
+</head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+{v === "a" ? <HeaderA section={section} /> : <HeaderB section={section} />}
+<main id="main" tabindex="-1">
+  <slot name="hero" />
+  <div class={wide ? "" : "wrap page"}>
+    {trail.length > 0 && (
+      <nav aria-label="Навигационная цепочка"><ol class="crumbs">
+        {trail.map(([p, n], i) => i < trail.length - 1 ? <li><a href={link(v, p)}>{n}</a></li> : <li aria-current="page">{n}</li>)}
+      </ol></nav>
+    )}
+    <slot />
+  </div>
+</main>
+{v === "a" ? <FooterA /> : <FooterB />}
+<div id="live" class="sr" aria-live="polite"></div>
+<div class="toast" data-toast hidden role="status"><span data-toast-text></span><a href={link(v, "zapros/")}>Открыть список запроса</a></div>
+<dialog class="viewer" data-viewer aria-labelledby="viewer-title" data-zoom="fit">
+  <div class="viewer-bar">
+    <p id="viewer-title" data-viewer-title></p>
+    <div class="viewer-tools" role="group" aria-label="Масштаб">
+      <button type="button" class="btn sm ghost" data-zoom-set="fit" aria-pressed="true">По размеру окна</button>
+      <button type="button" class="btn sm ghost" data-zoom-set="1" aria-pressed="false">Исходный размер</button>
+      <a class="btn sm ghost" data-viewer-open href="#" target="_blank" rel="noopener"><Icon name="external-link" size={16} />В новой вкладке</a>
+      <button type="button" class="btn sm" data-viewer-close><Icon name="x" size={16} />Закрыть</button>
+    </div>
+  </div>
+  <div class="viewer-body" tabindex="0"><img alt="" data-viewer-img></div>
+</dialog>
+<script>import "../engine/client.ts";</script>
+</body>
+</html>

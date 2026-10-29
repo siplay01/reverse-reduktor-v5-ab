@@ -1,0 +1,32 @@
+---
+// Demo entry: two designs over one data base. Not part of the client site.
+import "@fontsource-variable/golos-text/index.css";
+import "../styles/base.css";
+import { root, VARIANT_NAME } from "../lib/site";
+const PAGES: [string, string][] = [["", "Главная"], ["produkciya/rr-300/", "РР-300"], ["zapchasti/", "Поиск запчастей"], ["zapchasti/rr-300/ris-05/", "Узел, рис. 5"], ["dokumentaciya/", "Документация и РКО"], ["zakupki/", "Закупки"], ["zapros/", "Список запроса"]];
+---
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Реверс-редуктор V5: дизайны A и B</title>
+<meta name="description" content="Демонстрация двух дизайнов сайта ООО «Дело»: A Naval Authority и B Steel & Cobalt.">
+<meta name="robots" content="noindex, nofollow"><meta name="color-scheme" content="light dark">
+<link rel="icon" href={root("favicon.svg")} type="image/svg+xml">
+</head>
+<body class="chooser">
+<main class="wrap">
+  <h1>Реверс-редуктор · V5</h1>
+  <p class="lead">Два самостоятельных дизайна сайта ООО «Дело» на одних данных. Одинаковые адреса страниц в обоих вариантах.</p>
+  <div class="ch-grid">
+    {(["a", "b"] as const).map((v) => (
+      <section class={`ch ch-${v}`} aria-labelledby={`ch-${v}`}>
+        <h2 id={`ch-${v}`}><a href={root(`${v}/`)}>{VARIANT_NAME[v]}</a></h2>
+        <p>{v === "a" ? "Редакционная композиция: тёмный hero с подлинным фото РР-300, бронзовые линии, светлые рабочие таблицы." : "Светлый инженерный портал: поиск в шапке и на первом экране, кобальтовые маркеры, спецификационные строки."}</p>
+        <ul>{PAGES.map(([p, n]) => <li><a href={root(`${v}/${p}`)}>{n}</a></li>)}</ul>
+      </section>
+    ))}
+  </div>
+</main>
+</body>
+</html>

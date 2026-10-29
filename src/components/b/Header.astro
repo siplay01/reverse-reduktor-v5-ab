@@ -1,0 +1,31 @@
+---
+import Icon from "../shared/Icon.astro";
+import { COMPANY, CERT, link } from "../../lib/site";
+import { NAV, NAV2 } from "../../lib/nav";
+const { section } = Astro.props as { section: string };
+const L = (p = "") => link("b", p);
+---
+<div class="b-strip"><div class="wrap">
+  <span>{COMPANY.operator}, {COMPANY.city}</span>
+  <a href={L("dokumentaciya/#rko")}><Icon name="certificate" size={16} /><span class="long">Свидетельство </span>РКО № {CERT.no}<span class="long"> · до {CERT.to}</span></a>
+  <a href={`mailto:${COMPANY.email}`} class="b-mail"><Icon name="mail" size={16} />{COMPANY.email}</a>
+  <a href={`tel:${COMPANY.tel}`}><Icon name="phone" size={16} />{COMPANY.phone}</a>
+</div></div>
+<header class="b-header"><div class="wrap">
+  <a class="b-brand" href={L()}>
+    <span class="b-mark" aria-hidden="true"></span><span><b>{COMPANY.brand}</b><small>{COMPANY.tagline}</small></span>
+  </a>
+  <form class="b-hsearch" role="search" action={L("zapchasti/")} method="get">
+    <label class="sr" for="b-hq">Поиск детали по обозначению или названию</label>
+    <input id="b-hq" name="q" type="search" placeholder="Обозначение, например 525-16-110" autocomplete="off" spellcheck="false" enterkeyhint="search">
+    <button type="submit" class="btn sm"><Icon name="search" size={16} /><span class="sr">Найти</span></button>
+  </form>
+  <a class="b-rfq" href={L("zapros/")} data-rfq-count-wrap aria-current={section === "zapros/" ? "page" : undefined}>
+    <Icon name="clipboard-list" size={20} /><span class="lbl">Список запроса</span><span class="cnt" data-rfq-count>0</span><span class="sr"> позиций</span>
+  </a>
+  <button class="menu-btn" type="button" aria-controls="nav" aria-expanded="false" data-menu><Icon name="menu-2" size={22} /><span>Меню</span></button>
+</div>
+<nav class="b-nav" id="nav" aria-label="Основное меню"><div class="wrap">
+  <ul>{[...NAV, ...NAV2].map(([p, n]) => <li><a href={L(p)} aria-current={section === p ? "page" : undefined}>{n}</a></li>)}</ul>
+</div></nav>
+</header>

@@ -1,0 +1,27 @@
+---
+// The one full certificate block: real scan, number, dates, quoted scope, original PDF.
+import Icon from "./Icon.astro";
+import { CERT, root } from "../../lib/site";
+interface Props { headingLevel?: 2 | 3; id?: string }
+const { headingLevel = 2, id = "rko" } = Astro.props;
+const H = `h${headingLevel}` as "h2";
+---
+<section class="cert" id={id} aria-labelledby={`${id}-h`}>
+  <div class="cert-scan">
+    <img src={root(CERT.img.t.src)} width={CERT.img.t.w} height={CERT.img.t.h} alt={`Скан: ${CERT.kind} Российского Классификационного Общества № ${CERT.no}, выдано ООО «Дело»`} loading="lazy" decoding="async" />
+    <a class="fig-zoom" href={root(CERT.img.f.src)} data-zoom data-alt={`${CERT.kind} РКО № ${CERT.no}`}><Icon name="arrows-maximize" size={16} />Увеличить скан</a>
+  </div>
+  <div class="cert-body">
+    <p class="cert-kicker">{CERT.issuer}</p>
+    <H id={`${id}-h`}>{CERT.kind} № {CERT.no}</H>
+    <dl class="cert-facts">
+      <div><dt>Признано за</dt><dd>ООО «Дело» (ИНН 2225060059), г. Барнаул</dd></div>
+      <div><dt>Вступает в силу</dt><dd class="num">{CERT.from}</dd></div>
+      <div><dt>Действует до</dt><dd class="num">{CERT.to}</dd></div>
+      <div><dt>Выдано</dt><dd>{CERT.branch}</dd></div>
+    </dl>
+    <p class="cert-scope-h">Виды работ, выполняемых в соответствии с Правилами РКО:</p>
+    <ul class="cert-scope">{CERT.scope.map((s) => <li>{s}</li>)}</ul>
+    <p><a class="btn" href={root(CERT.pdf)} target="_blank" rel="noopener" type="application/pdf"><Icon name="file-type-pdf" size={18} />Открыть PDF свидетельства<span class="btn-meta">{CERT.pdfKb} КБ</span></a></p>
+  </div>
+</section>

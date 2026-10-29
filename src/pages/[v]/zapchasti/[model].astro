@@ -1,0 +1,21 @@
+---
+import Site from "../../../layouts/Site.astro";
+import Finder from "../../../components/shared/Finder.astro";
+import { perVariant } from "../../../lib/page";
+import { models, type Model } from "../../../lib/domain";
+import { link, type V } from "../../../lib/site";
+export function getStaticPaths() {
+  return perVariant(() => models.filter((m) => !m.hasNodeCatalog).map((m) => ({ params: { model: m.slug }, props: { m } })));
+}
+const { v, m } = Astro.props as { v: V; m: Model };
+---
+<Site v={v} title={`Запасные части ${m.name} (${m.designation})`} section="zapchasti/"
+  crumbs={[["zapchasti/", "Запасные части"], [`zapchasti/${m.slug}/`, m.name]]}
+  description={`Перечень запасных частей к реверс-редуктору ${m.name} ${m.designation} по заводским обозначениям, поиск и список запроса. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head">
+    <p class="kicker"><a href={link(v, `produkciya/${m.slug}/`)}>Реверс-редуктор {m.name}</a> · <span class="sku">{m.designation}</span></p>
+    <h1>Запасные части {m.name}</h1>
+    <p class="lead">Перечень по заводским обозначениям. Если нужной детали нет в перечне, укажите обозначение или название в запросе: деталь подбирается по документации.</p>
+  </header>
+  <Finder v={v} model={m.id} />
+</Site>

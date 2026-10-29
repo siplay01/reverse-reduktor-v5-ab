@@ -1,0 +1,26 @@
+---
+import { COMPANY, CERT, link, root } from "../../lib/site";
+import { NAV, NAV2 } from "../../lib/nav";
+const L = (p = "") => link("a", p);
+---
+<footer class="a-footer"><div class="wrap">
+  <div class="a-f-grid">
+    <div class="a-f-brand">
+      <p class="a-f-word">{COMPANY.brand}</p>
+      <p>{COMPANY.full}. Изготовление, ремонт и запасные части судовых реверс-редукторов.</p>
+      <p><a href={L("dokumentaciya/#rko")}>Свидетельство о признании РКО № {CERT.no}</a>, до {CERT.to}</p>
+    </div>
+    <nav aria-label="Разделы сайта"><ul>{[...NAV, ...NAV2].map(([p, n]) => <li><a href={L(p)}>{n}</a></li>)}</ul></nav>
+    <div class="a-f-contacts">
+      <p><a class="big" href={`tel:${COMPANY.tel}`}>{COMPANY.phone}</a></p>
+      <p><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></p>
+      <p>{COMPANY.address}</p>
+    </div>
+  </div>
+  <div class="a-f-legal">
+    <span>ИНН {COMPANY.inn} · ОГРН {COMPANY.ogrn}</span>
+    <a href={L("kontakty/#rekvizity")}>Полные реквизиты</a>
+    <a href={L("konfidencialnost/")}>Политика обработки персональных данных</a>
+    <a href={root()}>Сравнение дизайнов A и B</a>
+  </div>
+</div></footer>

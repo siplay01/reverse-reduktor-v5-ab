@@ -1,0 +1,53 @@
+---
+import Site from "../../../layouts/Site.astro";
+import Icon from "../../../components/shared/Icon.astro";
+import Requisites from "../../../components/shared/Requisites.astro";
+import { perVariant } from "../../../lib/page";
+import { COMPANY, CERT, MANUAL, link, root, type V } from "../../../lib/site";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+const L = (p = "") => link(v, p);
+const inv = `mailto:${COMPANY.email}?subject=${encodeURIComponent("Приглашение к участию в закупке")}`;
+const eis = `https://zakupki.gov.ru/epz/order/extendedsearch/results.html?searchString=${COMPANY.inn}`;
+---
+<Site v={v} title="Закупки и тендеры: документы участника" section="zakupki/" crumbs={[["zakupki/", "Закупки и тендеры"]]}
+  description={`Документы и реквизиты ООО «Дело» для закупок и тендеров: свидетельство РКО № ${CERT.no}, карточка предприятия, предмет поставки. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head">
+    <h1>Закупки и тендеры</h1>
+    <p class="lead">ООО «Дело» принимает приглашения к участию в закупках и запросах котировок на поставку реверс-редукторов, запасных частей и выполнение ремонта.</p>
+  </header>
+  <div class="proc">
+    <section class="proc-main" aria-labelledby="h-subj">
+      <h2 id="h-subj">Предмет поставки и работ</h2>
+      <ul class="ticks">
+        <li>Судовые реверс-редукторы <a href={L("produkciya/rr-300/")}>РР-300</a>, <a href={L("produkciya/rr-238/")}>РР-238</a>, <a href={L("produkciya/3d6/")}>3Д6</a>, <a href={L("produkciya/3d12/")}>3Д12</a>.</li>
+        <li>Запасные части по заводским обозначениям: <a href={L("zapchasti/")}>поиск и перечни</a>.</li>
+        <li>Дефектация и капитальный ремонт судовых реверс-редукторов; <a href={L("uslugi/")}>другие услуги</a>.</li>
+      </ul>
+      <h2>Как направить приглашение</h2>
+      <ol class="steps">
+        <li><b>Ссылка или техническое задание</b><span>На <a href={inv}>{COMPANY.email}</a>, тема письма «Приглашение к участию в закупке».</span></li>
+        <li><b>Спецификация</b><span>Перечень позиций можно собрать в <a href={L("zapros/")}>списке запроса</a> и приложить к письму файлом.</span></li>
+        <li><b>Ответ</b><span>Предприятие уточняет исполнение и сроки и готовит предложение.</span></li>
+      </ol>
+      <h2 id="docs">Документы участника</h2>
+      <div class="tbl-wrap" tabindex="0" role="region" aria-label="Документы участника">
+        <table class="tbl docs">
+          <thead><tr><th scope="col">Документ</th><th scope="col">Формат</th><th scope="col"><span class="sr">Открыть</span></th></tr></thead>
+          <tbody>
+            <tr><th scope="row">{CERT.kind} РКО № {CERT.no}, {CERT.from}–{CERT.to}</th><td class="nw">PDF, {CERT.pdfKb} КБ</td><td><a class="btn ghost sm" href={root(CERT.pdf)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={16} />Открыть</a></td></tr>
+            <tr><th scope="row">Карточка предприятия (реквизиты)</th><td class="nw">TXT</td><td><a class="btn ghost sm" href={root("rekvizity.txt")} download="rekvizity-ooo-delo.txt"><Icon name="file-download" size={16} />Скачать</a></td></tr>
+            <tr><th scope="row">{MANUAL.title}</th><td class="nw">PDF, {MANUAL.pages} с.</td><td><a class="btn ghost sm" href={root(MANUAL.href)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={16} />Открыть</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small">Закупки с участием предприятия можно найти в Единой информационной системе по ИНН {COMPANY.inn}: <a href={eis} target="_blank" rel="noopener">поиск в ЕИС<Icon name="external-link" size={14} /></a>.</p>
+    </section>
+    <aside class="proc-aside" aria-labelledby="h-req">
+      <h2 id="h-req">Реквизиты участника</h2>
+      <Requisites />
+    </aside>
+  </div>
+</Site>

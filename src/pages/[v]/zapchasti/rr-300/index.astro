@@ -1,0 +1,35 @@
+---
+import Site from "../../../../layouts/Site.astro";
+import Icon from "../../../../components/shared/Icon.astro";
+import { perVariant } from "../../../../lib/page";
+import { nodes, rr300 } from "../../../../lib/domain";
+import { link, root, type V } from "../../../../lib/site";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+const L = (p = "") => link(v, p);
+const sub = (d: string) => (d && d !== rr300.designation ? d : "");
+---
+<Site v={v} title="Каталог деталей РР-300: 26 узлов по заводским чертежам" section="zapchasti/"
+  crumbs={[["zapchasti/", "Запасные части"], ["zapchasti/rr-300/", "РР-300"]]}
+  description={`Каталог деталей и сборочных единиц реверс-редуктора РР-300 СБ525-01-13: 26 чертежей узлов с позициями и спецификациями, количество по исполнениям. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head">
+    <p class="kicker">Реверс-редуктор РР-300 · <span class="sku">{rr300.designation}</span></p>
+    <h1>Каталог деталей и сборочных единиц РР-300</h1>
+    <p class="lead">{nodes.length} узлов. На странице узла: оригинальный чертёж с номерами позиций, спецификация, количество на одно изделие выбранного исполнения и кнопка «В запрос».</p>
+    <p class="btns"><a class="btn ghost" href={L("zapchasti/?m=rr300")}><Icon name="search" size={18} />Найти деталь по обозначению</a><a class="btn ghost" href={L("dokumentaciya/katalog-rr-300/")}>Сканы каталога целиком</a></p>
+  </header>
+  <ol class={v === "a" ? "a-nodes" : "b-nodes"}>
+    {nodes.map((n) => (
+      <li>
+        <a href={L(`zapchasti/rr-300/${n.slug}/`)} data-keep-isp>
+          {v === "a" && <span class="a-node-img"><img src={root(n.drawing.t.src)} width={n.drawing.t.w} height={n.drawing.t.h} alt="" loading="lazy" decoding="async" /></span>}
+          <span class="node-no">Рис. {n.figure}</span>
+          <span class="node-t">{n.title}</span>
+          <span class="node-m">{sub(n.designation) && <span class="sku">{sub(n.designation)}</span>}<span>{n.rows.length} поз.</span></span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</Site>

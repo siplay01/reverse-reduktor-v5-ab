@@ -1,0 +1,26 @@
+---
+import Icon from "../shared/Icon.astro";
+import { COMPANY, CERT, link } from "../../lib/site";
+import { NAV, NAV2 } from "../../lib/nav";
+const { section } = Astro.props as { section: string };
+const L = (p = "") => link("a", p);
+---
+<div class="a-topline"><div class="wrap">
+  <span class="a-op">{COMPANY.operator} · изготовление, ремонт и запасные части судовых реверс-редукторов</span>
+  <a class="a-rko" href={L("dokumentaciya/#rko")}><Icon name="certificate" size={16} />РКО № {CERT.no}</a>
+  <a href={`tel:${COMPANY.tel}`} class="a-tel"><Icon name="phone" size={16} />{COMPANY.phone}</a>
+</div></div>
+<header class="a-header"><div class="wrap">
+  <a class="a-brand" href={L()}>
+    <b>{COMPANY.brand}</b><span>{COMPANY.tagline}</span>
+  </a>
+  <nav class="a-nav" id="nav" aria-label="Основное меню">
+    <ul class="main">{NAV.map(([p, n]) => <li><a href={L(p)} aria-current={section === p ? "page" : undefined}>{n}</a></li>)}</ul>
+    <ul class="sec">{NAV2.map(([p, n]) => <li><a href={L(p)} aria-current={section === p ? "page" : undefined}>{n.split(" ")[0]}</a></li>)}</ul>
+    <p class="a-nav-contact"><a href={`tel:${COMPANY.tel}`}>{COMPANY.phone}</a><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></p>
+  </nav>
+  <a class="a-rfq" href={L("zapros/")} data-rfq-count-wrap aria-current={section === "zapros/" ? "page" : undefined}>
+    <Icon name="clipboard-list" size={20} /><span class="lbl">Запрос</span><span class="cnt" data-rfq-count>0</span><span class="sr"> позиций в списке запроса</span>
+  </a>
+  <button class="menu-btn" type="button" aria-controls="nav" aria-expanded="false" data-menu><Icon name="menu-2" size={22} /><span>Меню</span></button>
+</div></header>

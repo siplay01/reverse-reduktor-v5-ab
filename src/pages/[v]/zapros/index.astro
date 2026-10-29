@@ -1,0 +1,19 @@
+---
+import Site from "../../../layouts/Site.astro";
+import RfqPage from "../../../components/shared/RfqPage.astro";
+import { perVariant } from "../../../lib/page";
+import type { V } from "../../../lib/site";
+export function getStaticPaths() {
+  return perVariant();
+}
+const { v } = Astro.props as { v: V };
+---
+<Site v={v} title="Список запроса коммерческого предложения" section="zapros/" crumbs={[["zapros/", "Список запроса"]]}
+  description={`Список запроса: заводские обозначения, исполнение, количество на изделие и запрашиваемое количество; копирование, файл или письмо. Дизайн ${v.toUpperCase()}.`}>
+  <header class="page-head">
+    <h1 tabindex="-1">Список запроса</h1>
+    <p class="lead">Проверьте позиции и запрашиваемое количество. Количество на одно изделие взято из спецификации и не меняется.</p>
+  </header>
+  <noscript><p class="note-box">Список запроса работает в браузере с включённым JavaScript. Без него напишите обозначения деталей на почту, указанную внизу страницы.</p></noscript>
+  <RfqPage v={v} />
+</Site>

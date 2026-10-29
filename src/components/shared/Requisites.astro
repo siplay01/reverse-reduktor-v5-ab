@@ -1,0 +1,15 @@
+---
+import Icon from "./Icon.astro";
+import { REQUISITES, root } from "../../lib/site";
+const text = REQUISITES.map(([k, v]) => `${k}: ${v}`).join("\n");
+---
+<div class="req">
+  <dl class="req-list" id="req-data" data-text={text}>
+    {REQUISITES.map(([k, v]) => <div><dt>{k}</dt><dd class={/^\d+$/.test(v) ? "num" : ""}>{v}</dd></div>)}
+  </dl>
+  <div class="req-actions">
+    <button type="button" class="btn ghost sm" data-copy-from="req-data"><Icon name="copy" size={16} />Скопировать реквизиты</button>
+    <a class="btn ghost sm" href={root("rekvizity.txt")} download="rekvizity-ooo-delo.txt"><Icon name="file-download" size={16} />Скачать .txt</a>
+    <button type="button" class="btn ghost sm" data-print><Icon name="printer" size={16} />Распечатать</button>
+  </div>
+</div>
